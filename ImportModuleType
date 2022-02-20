@@ -1,0 +1,12 @@
+from tkinter import *
+from MainWindow import MainWindow
+
+
+def main():
+    root = Tk()
+    MainScreen = MainWindow(root,'Imported Constructor',4,'#224477','#112233','#777755')
+    MainScreen.insertText(0,'London is here')
+    root.mainloop()
+
+
+main()
