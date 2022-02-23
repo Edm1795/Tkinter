@@ -1,0 +1,12 @@
+#Import tkinter library
+from tkinter import *
+#Create an instance of tkinter frame
+win= Tk()
+#Set the Geometry
+# win.geometry("750x250")
+#Create a text widget
+text= Text(win)
+text.insert(INSERT, "Hey, There!")
+text.grid_columnconfigure(0, weight=1)
+text.pack(expand=True, fill=BOTH)
+win.mainloop()
