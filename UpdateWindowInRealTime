@@ -1,0 +1,120 @@
+from tkinter import *
+from tkinter import ttk
+import time
+
+#######  This is a crucial discovery which allows the program to update the display one line at a time in real time. See Def updateSpedometer
+# with the .update()
+
+class MainWindow:
+    def __init__(self, master):
+
+        # Master Window
+        self.master = master
+        self.master.title('Tkinter Interface for Frames')
+        self.master.geometry("+50+100")  # position of the window in the screen (200x300)
+        # self.master.geometry("700x400")  # set size of the root window (master) (1500x700);
+        # if not set, the frames will fill the master window
+
+        screenWidth = self.master.winfo_screenwidth()
+        screenHeight = self.master.winfo_screenheight()
+
+        # Instantiate frames
+        self.frame0 = Frame(self.master, bd=5, padx=5, bg='#335533')
+        self.frame1 = Frame(self.master, bd=5, padx=5, bg='#115533')
+        self.frame2 = Frame(self.master, bd=5, padx=5,bg='#110033')
+        self.frame3 = Frame(self.master, bd=5, padx=5,bg='#112233')
+        self.frame4 = Frame(self.master, bd=5, padx=5,bg='#116633')
+
+        # Place frames
+        self.frame0.grid(row=0, column=1, sticky="nsew")
+        self.frame1.grid(row=1, column=0, sticky="nsew")  # ipadx = 10 worked here
+        self.frame2.grid(row=1, column=1, sticky="nsew")
+        self.frame3.grid(row=1, column=2, sticky="nsew")
+        self.frame4.grid(row=1, column=3, sticky="nsew")
+
+        # configure weighting of frames
+        self.master.grid_columnconfigure(0, weight=1) # ALlows frames to expand as master window expands
+        self.master.grid_columnconfigure(1, weight=1)
+        self.master.grid_columnconfigure(2, weight=1)
+        self.master.grid_columnconfigure(3, weight=2)
+        self.master.grid_columnconfigure(4, weight=2)
+
+        # self.master.grid_rowconfigure(1, weight=1)
+
+        frameWidth = 20  # Units are in characters not pixels
+
+        # Set up text boxes
+        self.text1 = Text(self.frame1, height=20, width=frameWidth, bg='#113333', fg='white')
+        self.text1.insert(INSERT, 'The complete works of Shakespeare were written by William')
+        # self.text1.grid_columnconfigure(0, weight=1)
+        self.text1.grid_rowconfigure(0, weight=1)
+        self.text1.config(wrap='word')
+        self.text1.pack()
+
+        self.text2 = Text(self.frame2, height=30, width=frameWidth, bg='#112233', fg='white')
+        self.text2.insert(INSERT, '')
+        # self.text2.grid_columnconfigure(0, weight=1)
+        self.text2.grid_rowconfigure(0, weight=1)
+        self.text2.config(wrap='word')
+        self.text2.pack()
+
+        self.text3 = Text(self.frame3, height=30, width=frameWidth, bg='#112233', fg='white')
+        self.text3.insert(INSERT, '')
+        # self.text3.grid_columnconfigure(0, weight=1)
+        self.text3.grid_rowconfigure(0, weight=1)
+        self.text3.config(wrap='word')
+        self.text3.pack()
+
+        self.entry = Entry(self.frame0, width='10')
+        self.entry.pack()
+
+        self.entry.bind('<Return>', lambda event: self.updateSpedometer())
+
+        # creating and placing scrollbar
+        sb = Scrollbar(self.master, orient=VERTICAL)
+        sb.grid(row=1,column=1,sticky='nse')
+
+        # binding scrollbar with other widget (Text, Listbox, Frame, etc)
+
+        self.text1.config(yscrollcommand=sb.set)
+        sb.config(command=self.text1.yview)
+
+        # self.text4 = Text(self.frame4, height=30, width=frameWidth, bg='#112233', fg='white')
+        # self.text4.insert(INSERT, '')
+        # # self.text4.grid_columnconfigure(0, weight=1)
+        # self.text4.grid_rowconfigure(0, weight=2)
+        # self.text4.config(wrap='word')
+        # self.text4.pack()
+
+        # Create a canvas object
+        self.c = Canvas(self.frame4, width=200, height=200)
+
+
+        # Draw an Oval in the canvas
+        self.c.create_oval(60, 60, 150, 150)
+        self.c.pack()
+        self.c.create_line(105, 105, 80, 145, fill="green", width=3)  # x and Y of both ends of line (1st point: horiz, verti
+
+
+    def updateSpedometer(self):
+
+        for i in range(40):
+            time.sleep(0.1)
+            self.c.create_line(i,105,80,145, fill='black', width=3)
+            self.master.update()  # this crucial line update's the screen one line at a time in real time.
+
+
+        btn = ttk.Button(self.master)
+        print(btn.configure().keys())
+        print(self.frame1.configure().keys())
+        # print(dir(self.frame1))
+
+
+def main():
+    root = Tk()
+    MainWindow(root)
+
+    root.mainloop()
+
+
+main()
