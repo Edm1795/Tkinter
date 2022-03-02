@@ -1,0 +1,157 @@
+from tkinter import *
+from tkinter import ttk
+import math
+import numpy
+import time
+
+
+
+class MainWindow:
+    def __init__(self, master):
+
+        # Master Window
+        self.master = master
+        self.master.title('Tkinter Interface for Frames')
+        self.master.geometry("+50+100")  # position of the window in the screen (200x300)
+        # self.master.geometry("700x400")  # set size of the root window (master) (1500x700);
+        # if not set, the frames will fill the master window
+
+        screenWidth = self.master.winfo_screenwidth()
+        screenHeight = self.master.winfo_screenheight()
+
+        # Instantiate frames
+        self.frame0 = Frame(self.master, bd=5, padx=5, bg='#448833')  # Top long row
+        self.frame1 = Frame(self.master, bd=5, padx=5, bg='#115533')  # Side Column
+        self.frame2 = Frame(self.master, bd=5, padx=5,bg='#114466')  # Main frame
+        # self.frame3 = Frame(self.master, bd=5, padx=5,bg='#112233')
+        # self.frame4 = Frame(self.master, bd=5, padx=5,bg='#116633')
+
+        # Place frames
+        self.frame0.grid(row=0, column=0, columnspan=2, sticky="nsew")
+        self.frame1.grid(row=1, column=0, sticky="nsew")
+        self.frame2.grid(row=1, column=1, sticky="nsew")
+        # self.frame3.grid(row=1, column=2, sticky="nsew")
+        # self.frame4.grid(row=1, column=3, sticky="nsew")
+
+        # configure weighting of frames
+        self.master.grid_columnconfigure(0, weight=1) # ALlows frames to expand as master window expands
+        self.master.grid_columnconfigure(1, weight=1)
+        self.master.grid_columnconfigure(2, weight=1)
+        # self.master.grid_columnconfigure(3, weight=2)
+        # self.master.grid_columnconfigure(4, weight=2)
+
+        # self.master.grid_rowconfigure(1, weight=1)
+
+        frameWidth = 10  # Units are in characters not pixels
+
+        # Set up text boxes
+        self.text1 = Text(self.frame1, height=20, width=frameWidth, bg='#113333', fg='white')
+        self.text1.insert(INSERT, 'The complete works of Shakespeare were written by William')
+        # self.text1.grid_columnconfigure(0, weight=1)
+        self.text1.grid_rowconfigure(0, weight=1)
+        self.text1.config(wrap='word')
+        self.text1.pack()
+
+        self.entry = Entry(self.frame0, width='10')
+        self.entry.pack()
+
+        self.entry.bind('<Return>', lambda event: self.updateSpedometer(585))
+
+        # creating and placing scrollbar
+        sb = Scrollbar(self.master, orient=VERTICAL)
+        sb.grid(row=1,column=1,sticky='nse')
+
+        # binding scrollbar with other widget (Text, Listbox, Frame, etc)
+
+        self.text1.config(yscrollcommand=sb.set)
+        sb.config(command=self.text1.yview)
+
+        self.drawCircle(10,10,100,100)
+
+        self.CircleOrigin = self.calcCircleOrigin(10,10,100,100)
+
+    def drawCircle(self,x1,y1,x2,y2):
+        ''' inputs: 4 ints: coordinates of square, top left, and bottom right'''
+
+        # Create a canvas object
+        self.c = Canvas(self.frame2, width=200, height=100, bg='white')
+
+        # Draw an Oval in the canvas
+        self.c.create_oval(x1,y1,x2,y2)
+        # self.c.pack()
+        self.c.grid(row=1,column=2,sticky='nse')
+
+        self.label = Label(self.frame2, text='Black Pens')
+        # self.label.pack()
+        self.label.grid(row=1, column=1, sticky='nse')
+
+    def calcCircleOrigin(self,x1,y1,x2,y2):
+
+        x = (x1 + x2) / 2
+        y = (y1 + y2) / 2
+
+        return [x,y]
+
+    def updateSpedometer(self, speed, radius, ):
+
+        list1 = []  # list for storing all coordinates
+        speed += 1  # add 1 to speed so that the call to Spedometer can be done with round numbers, ex 90
+        for deg in range(320, speed):
+            x = 55 - (45 * (math.cos(numpy.round(numpy.deg2rad(deg),2))))  # calc coordinate of x and y on circle's circum. xCoordOfOrigin - (rad. * cos(deg))
+            y = 55 - (45 * (math.sin(numpy.round(numpy.deg2rad(deg),2))))  # yCoordOfOrigin - (rad. * sin(deg)
+            list1.append((numpy.round(x,2),numpy.round(y,2)))  # [(x,y),(x,y),(x,y)...]
+
+            # colour = '#11' + str(deg) + str(deg) #  optional colour changer according to degree changes
+
+        for i in range(0, len(list1),2):  # move in steps of two, 0,2,4,6
+
+            tup = list1[i]  # cache first tup of coordinates, for white colour line (to erase purple line)
+            nextTup = list1[i+1]  # cache next tup of coord. for purple line
+
+            self.c.create_line(55,55,nextTup[0],nextTup[1], fill='purple', width=2)  # draw line in circle; values: x and Y of both  ends of line (1st point: horiz, verti, end point horiz, vert.
+            self.master.update()
+
+            if i < len(list1):  # does not work
+                self.c.create_line(55,55,tup[0],tup[1], fill='white', width=3)  # values: x and Y of both ends of line (1st point: horiz, verti, end point horiz, vert.
+            # print(deg,x,y)
+
+
+            # if deg < (speed-1): #  do not erase the last line, eg: 90 deg if a speed of 90 was called
+            #     x = 55 - (45 * (math.cos(numpy.round(numpy.deg2rad(deg-1),2))))  # calc coordinate of x and y on circle's circum.
+            #     y = 55 - (45 * (math.sin(numpy.round(numpy.deg2rad(deg-1),2))))
+            #     self.c.create_line(55,55,x,y, fill='white', width=3)  # values: x and Y of both ends of line (1st point: horiz, verti, end point horiz, vert.
+            # print(deg,x,y)
+
+            # time.sleep(0.0001)
+
+    def runResults(self):
+
+        self.c.create_line(55, 55, x, y, fill='purple', width=3)  # draw line in circle; values: x and Y of both  ends of line (1st point: horiz, verti, end point horiz, vert.
+        self.master.update()
+
+        # x(t) = r cos(t) + j
+        # y(t) = r sin(t) + k
+
+        btn = ttk.Button(self.master)
+        print(btn.configure().keys())
+        print(self.frame1.configure().keys())
+        # print(dir(self.frame1))
+
+
+
+
+
+
+
+
+
+
+
+def main():
+    root = Tk()
+    MainWindow(root)
+
+    root.mainloop()
+
+
+main()
