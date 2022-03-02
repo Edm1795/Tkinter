@@ -55,20 +55,34 @@ class MainWindow:
         self.entry = Entry(self.frame0, width='10')
         self.entry.pack()
 
-        self.entry.bind('<Return>', lambda event: self.updateSpedometer(585))
+        self.drawCircle(10, 10, 80, 80)  # draws circle according to coordinates of containing box. Be sure to call self.circleOrigin with the SAME values so that the spedmeter line fits correctly in the circle
+        self.circleOrigin = self.calcCircleOrigin(10, 10, 80, 80)  # self.circleOrigin: a list of spedmeter's values: [xOrigin, yOrigin, radius]
+
+        self.entry.bind('<Return>',lambda event: self.updateSpedometer(585, self.circleOrigin[2], self.circleOrigin[0], self.circleOrigin[1]))  # first value is number of degrees the spedometer must turn
 
         # creating and placing scrollbar
         sb = Scrollbar(self.master, orient=VERTICAL)
-        sb.grid(row=1,column=1,sticky='nse')
+        sb.grid(row=1, column=1, sticky='nse')
 
         # binding scrollbar with other widget (Text, Listbox, Frame, etc)
 
         self.text1.config(yscrollcommand=sb.set)
         sb.config(command=self.text1.yview)
 
-        self.drawCircle(10,10,100,100)
+    def calcCircleOrigin(self, x1, y1, x2, y2):
+        ''' calculates the spedometer's important circle values: radius, and coordinates of origin
+        inputs: x1,y1,x2,y2 of the containing box for the circle: upper left and lower right coordinates
+        Outputs: list of the spedometer's circle values: [xOrigin,yOrigin, radius]'''
+        x = (x1 + x2) / 2
+        y = (y1 + y2) / 2
+        radius = (x2 - x1) / 2
 
-        self.CircleOrigin = self.calcCircleOrigin(10,10,100,100)
+        return [x, y, radius]
+
+
+
+
+
 
     def drawCircle(self,x1,y1,x2,y2):
         ''' inputs: 4 ints: coordinates of square, top left, and bottom right'''
@@ -85,20 +99,15 @@ class MainWindow:
         # self.label.pack()
         self.label.grid(row=1, column=1, sticky='nse')
 
-    def calcCircleOrigin(self,x1,y1,x2,y2):
 
-        x = (x1 + x2) / 2
-        y = (y1 + y2) / 2
 
-        return [x,y]
-
-    def updateSpedometer(self, speed, radius, ):
+    def updateSpedometer(self, speed, radius, XcircleOrigin, YCircleOrigin):
 
         list1 = []  # list for storing all coordinates
         speed += 1  # add 1 to speed so that the call to Spedometer can be done with round numbers, ex 90
         for deg in range(320, speed):
-            x = 55 - (45 * (math.cos(numpy.round(numpy.deg2rad(deg),2))))  # calc coordinate of x and y on circle's circum. xCoordOfOrigin - (rad. * cos(deg))
-            y = 55 - (45 * (math.sin(numpy.round(numpy.deg2rad(deg),2))))  # yCoordOfOrigin - (rad. * sin(deg)
+            x = XcircleOrigin - (radius * (math.cos(numpy.round(numpy.deg2rad(deg),2))))  # calc coordinate of x and y on circle's circum. xCoordOfOrigin - (rad. * cos(deg))
+            y = YCircleOrigin - (radius * (math.sin(numpy.round(numpy.deg2rad(deg),2))))  # yCoordOfOrigin - (rad. * sin(deg)
             list1.append((numpy.round(x,2),numpy.round(y,2)))  # [(x,y),(x,y),(x,y)...]
 
             # colour = '#11' + str(deg) + str(deg) #  optional colour changer according to degree changes
@@ -108,11 +117,11 @@ class MainWindow:
             tup = list1[i]  # cache first tup of coordinates, for white colour line (to erase purple line)
             nextTup = list1[i+1]  # cache next tup of coord. for purple line
 
-            self.c.create_line(55,55,nextTup[0],nextTup[1], fill='purple', width=2)  # draw line in circle; values: x and Y of both  ends of line (1st point: horiz, verti, end point horiz, vert.
+            self.c.create_line(XcircleOrigin, YCircleOrigin,nextTup[0],nextTup[1], fill='purple', width=2)  # draw line in circle; values: x and Y of both  ends of line (1st point: horiz, verti, end point horiz, vert.
             self.master.update()
 
             if i < len(list1):  # does not work
-                self.c.create_line(55,55,tup[0],tup[1], fill='white', width=3)  # values: x and Y of both ends of line (1st point: horiz, verti, end point horiz, vert.
+                self.c.create_line(XcircleOrigin, YCircleOrigin,tup[0],tup[1], fill='white', width=3)  # values: x and Y of both ends of line (1st point: horiz, verti, end point horiz, vert.
             # print(deg,x,y)
 
 
