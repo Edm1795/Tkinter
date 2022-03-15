@@ -21,7 +21,8 @@ import time
 # 4.  Adds pickle function to update config file
 # 5.  Adds pickle function to load config file into speedometerDict
 # 6. Improves addItem to receive name of item from user, update config file, and reload the screen to show new item
-
+# 7. Sets w width to the Label widgets of 8 characters, this standardizes the size of all labels. Will need to create a new function to add new
+#       lines to text inside the label widgets.
 
 
 
@@ -55,7 +56,7 @@ class MainWindow:
         # self.frame4.grid(row=1, column=3, sticky="nsew")
 
         # configure weighting of frames
-        self.master.grid_columnconfigure(0, weight=1) # ALlows frames to expand as master window expands
+        self.master.grid_columnconfigure(0, weight=1) # Allows frames to expand as master window expands
         self.master.grid_columnconfigure(1, weight=1)
         self.master.grid_columnconfigure(2, weight=1)
 
@@ -78,9 +79,9 @@ class MainWindow:
         self.drawCircleEntry = Entry(self.frame1, width='15')
         self.drawCircleEntry.pack()
 
-        self.speedometerDict = {'Blue Pens':[[1,1],[1,2]],'China Markers':[[1,3],[1,4]]}  # list of all speedometer's and item names. Structure:  {itemNameAsKey: Value as list of lists [[values for drawCircle()...],[values for updateSpeedometer()...]]}
-        self.circProp = (10,10,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
-        self.circleOrigin = self.calcCircleOrigin(self.circProp[0],self.circProp[1],self.circProp[2],self.circProp[3])  # Returns a list of speedometer's values used for drawing line: [xOrigin, yOrigin, radius]
+        self.speedometerDict = {'Blue Pens':[[1,1],[1,2],501],'Staedtler Pens':[[1,3],[1,4],411],'China Markers':[[1,5],[1,6],401],'Red Pens':[[1,7],[1,8],581],'Paper Clips':[[1,9],[1,10],503],'White Tape':[[1,11],[1,12],501],'Golf Pencils':[[1,13],[1,14],401],'Scissors':[[2,1],[2,2],421],'Small\nTransparent\nName Tag\nSlips':[[2,3],[2,4],583]}  # list of all speedometer's and item names. Structure:  {itemNameAsKey: Value as list of lists [[values for drawCircle()...],[values for updateSpeedometer()...]]}
+        self.circProp = (20,20,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
+        self.circleOrigin = self.calcCircleOrigin(self.circProp[0],self.circProp[1],self.circProp[2],self.circProp[3])  # Returns a list of speedometer's values used for drawing line: [xOrigin, yOrigin, radius, width]
 
         # self.drawCircle(self.circProp[0],self.circProp[1], self.circProp[2], self.circProp[3], self.circProp[4], LabRowCol, cirRowCol, itemName)
         self.addStockItemEntry.bind('<Return>',lambda event: self.addItem([1,9],[1,10],self.addStockItemEntry.get()))  # first value is number of degrees the speedometer must turn
@@ -106,7 +107,7 @@ class MainWindow:
 
     def updateSpeedometerDict(self):
         """
-        This method loads the dictionary from the config.txt into the speedometerDict
+        This method loads the dictionary using pickle from the config.txt into the speedometerDict
         """
         with open('config.txt', 'rb') as f:
             self.speedometerDict=p.load(f)
@@ -114,9 +115,12 @@ class MainWindow:
     def drawCircles(self):
         for k,val in self.speedometerDict.items():
             self.drawCircle(k,[val[0][0],val[0][1]],[val[1][0],val[1][1]])
+            self.updateSpeedometer(val[2],self.circleOrigin[0], self.circleOrigin[1],self.circleOrigin[2])
 
     def updateConfigFile(self):
-
+        """
+        This method writes the speedometerDict into the config.txt file
+        """
         with open('config.txt', 'wb') as f:
             p.dump(self.speedometerDict, f)
 
@@ -152,12 +156,9 @@ class MainWindow:
     def drawCircle(self,itemName, LabRowCol,cirRowCol):
         """
         inputs:
-        4 ints: coordinates of square: top left x,y, and bottom right x,y,.
-         1 int: width of the circle's outline.
-         2 lists: each with 2 ints:
-                list 1: circle's position on frame row and column [col,row]
-                list 2: label's position on frame row and column  [col,row] (be sure to set it beside the circle)
-        1 str: name of item in stock
+        itemName: str of the stock item's name
+        LabRowCol: list of 2 ints for label's row and col placement [row,col]
+        cirRowCol: list of 2 ints for speedometer's row and col placement [row,col]
          """
 
         # Create a canvas object
@@ -168,7 +169,7 @@ class MainWindow:
         # self.c.pack()
         self.c.grid(row=cirRowCol[0], column=cirRowCol[1], sticky='nse')
 
-        self.label = Label(self.frame2, text=itemName)
+        self.label = Label(self.frame2, width=9, text=itemName)
         # self.label.pack()
         self.label.grid(row=LabRowCol[0], column=LabRowCol[1], sticky='nse')
 
