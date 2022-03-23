@@ -1,0 +1,258 @@
+from tkinter import *
+from tkinter import ttk
+import math
+import numpy
+import pickle as p
+import time
+
+
+# Version 0.1
+# 1. This is the first point where this project takes real formation. It opens a main window and displays speedometers showing the amount of
+#     quantity in stock.  The speedometer itself works although has not been scaled yet to show mulitple items independently
+
+# Version 0.2
+# 2. Changed speedometerList to a dict. speedometerDict. This will make updates to stock items easier as the item
+#       can be accessed by its key.
+
+# Version 0.25
+# 3.  Added list into speedometerDict which calls the updateSpeedometer method
+
+# Version 0.3
+# 4.  Adds pickle function to update config file
+# 5.  Adds pickle function to load config file into speedometerDict
+# 6. Improves addItem to receive name of item from user, update config file, and reload the screen to show new item
+# 7. Sets w width to the Label widgets of 8 characters, this standardizes the size of all labels. Will need to create a new function to add new
+#       lines to text inside the label widgets.
+# 8. Adds button for updating speedometers
+
+# Version 0.4
+# 9. Adds "add item" button which opens a popup window, takes the name entered, updates the speedometer Dictionary and updates the config file
+
+# Version 0.5
+# 10. Add item function now automatically calualates the grid position to place the new item on the screen.
+#           note: it only works on one row, and is not sophisticated.
+
+# Version 0.6
+# 11. Draw sped circles and speeds seperately.  Currently the drawcircles() can draw all speds but then updating the speed itself is only working on the last sped. probably
+#            because drawcircles can only access the last canvas created.  Confirm the cause of the problem, then if correct make a list for all canvases.
+#  12. Created self.canvases = [] and self.labels = [] to hold all such objects
+#  13. drawCircles() now draws all the speedometers first, then updates the speedometers to their correct speeds one by one (quantities)
+
+#  This is a key improvement for scaling up the interface
+
+class MainWindow:
+    def __init__(self, master):
+
+        # Master Window
+        self.master = master
+        self.master.title('Supply Chain Ver. 0.6')
+        self.master.geometry("+150+500")  # position of the window in the screen (200x300)
+        # self.master.geometry("700x400")  # set size of the root window (master) (1500x700);
+        # if not set, the frames will fill the master window
+
+        screenWidth = self.master.winfo_screenwidth()
+        screenHeight = self.master.winfo_screenheight()
+
+        # Instantiate frames
+        self.frame0 = Frame(self.master, bd=5, padx=5, bg='#448833')  # Top long row
+        self.frame1 = Frame(self.master, bd=5, padx=5, bg='#115533')  # Side Column
+        self.frame2 = Frame(self.master, bd=5, padx=5,bg='#114466')  # Main frame
+
+        # Place frames
+        self.frame0.grid(row=0, column=0, columnspan=2, sticky="nsew")
+        self.frame1.grid(row=1, column=0, sticky="nsew")
+        self.frame2.grid(row=1, column=1, sticky="nsew")
+
+        # configure weighting of frames
+        self.master.grid_columnconfigure(0, weight=1) # Allows frames to expand as master window expands
+        self.master.grid_columnconfigure(1, weight=1)
+        self.master.grid_columnconfigure(2, weight=1)
+
+        frameWidth = 10  # Units are in characters not pixels
+
+        #  Instantiate lists for canvases and labels
+        self.canvases = []
+        self.labels = []
+
+        #  Entry widgets
+        self.entry = Entry(self.frame0, width='10')
+        self.entry.pack()
+
+        self.addStockItemEntry = Entry(self.frame1, width='10')
+        self.addStockItemEntry.pack()
+        self.drawCircleEntry = Entry(self.frame1, width='15')
+        self.drawCircleEntry.pack()
+
+        # list of all speedometer's and item names. Structure:  {itemNameAsKey: Value as list of lists [[values for drawCircle()...],[values for updateSpeedometer()...]]}
+        self.speedometerDict = {'Blue Pens':[[1,1],[1,2],501],'Staedtler Pens':[[1,3],[1,4],411],'China Markers':[[1,5],[1,6],401],'Red Pens':[[1,7],[1,8],581],'Paper Clips':[[1,9],[1,10],503],'White Tape':[[1,11],[1,12],501],'Golf Pencils':[[1,13],[1,14],401],'Scissors':[[2,1],[2,2],421],'Small\nTransparent\nName Tag\nSlips':[[2,3],[2,4],583]}
+        self.circProp = (20,20,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
+        self.circleOrigin = self.calcCircleOrigin(self.circProp[0],self.circProp[1],self.circProp[2],self.circProp[3])  # Returns a list of speedometer's values used for drawing line: [xOrigin, yOrigin, radius, width]
+
+        self.button = Button(self.frame1, text="Update Speds", command=self.drawCircles)
+        self.button.pack()
+
+        self.addItemButton = Button(self.frame1, text="Add Item", command=self.addItem)
+        self.addItemButton.pack()
+
+       #  updateSpeedometer takes [xOrigin, yOrigin, radius]
+        self.entry.bind('<Return>',lambda event: self.updateSpeedometer(585, self.circleOrigin[0], self.circleOrigin[1],self.circleOrigin[2]))  # first value is number of degrees the speedometer must turn
+
+        self.drawCircleEntry.bind('<Return>',lambda event: self.drawCircles())  # first value is number of degrees the speedometer must turn
+        # {'Blue Pens':[[1,1],[1,2]],'China Markers':[[1,3],[1,4]]}
+
+        # creating and placing scrollbar
+        sb = Scrollbar(self.master, orient=VERTICAL)
+        sb.grid(row=1, column=1, sticky='nse')
+
+        # binding scrollbar with other widget (Text, Listbox, Frame, etc)
+        # self.text1.config(yscrollcommand=sb.set)
+        # sb.config(command=self.text1.yview)
+
+    def addItem(self):
+        """
+        This function opens up a popup window, takes text from the user and adds that text as an item to the Speedometer Dictionary;
+        it also updates the config file so that the item is permanently saved
+        """
+        top = Toplevel(self.master)
+        top.geometry("400x150")
+        top.title("Add New Item")
+        addItemLabel = Label(top, text="Add New Item", font=('Cambria 12'))  #  Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+        addItemLabel.grid(row=1, column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
+        addItemEntry = addItemEntry = Entry(top, width='40')
+        addItemEntry.grid(row=1, column=2)
+        addItemEntry.bind('<Return>', lambda event: addItemToSpeedometerDict())
+
+
+
+        def addItemToSpeedometerDict():
+
+            self.updateSpeedometerDict(addItemEntry.get())  # enter text from popup window to be used for name of item beign added
+            self.updateConfigFile()
+            completionMes = Label(top, text=addItemEntry.get() + ' added to your list of items', font=('Cambria 12'))
+            completionMes.grid(row=3, column=1)
+
+    def updateSpeedometerDict(self,newItemName):
+        """
+        This function adds new items to the Speedometer Dictionary from the add item button on the interface;
+        it also calculates the next position to place the new item on the screen
+        inputs: str: name of new item to add
+        """
+        lastValue=list(self.speedometerDict.values())[-1]  # get last value (list of lists: :[label(row,col):[2,5],circle(row,col):[2,6]],quantity:583]) from dict. [[1, 13], [1, 14], 401])
+        self.speedometerDict.update({newItemName: [[2, lastValue[0][1]+2], [2, lastValue[1][1]+2], 583]})  #  increment up appropriate amount to place new item on empty slot on grid
+        print(self.speedometerDict.items())
+
+
+    def loadSpeedometerDict(self):
+        """
+        This method uses pickle to load the dictionary from config.txt into the speedometerDict
+        """
+        with open('config.txt', 'rb') as f:
+            self.speedometerDict=p.load(f)
+            print('The  speedometer dictionary has been loaded from the config file')
+
+    def drawCircles(self):
+        count = 0  # counter for accessing correct item in list of canvases
+
+        #  Call drawCircle() for each k,v in speedometerDict.  Creates canvas object, label object, grids them to the screen according to list of lists [[1,1],[1,2]]
+        for k,val in self.speedometerDict.items():
+            self.drawCircle(k,[val[0][0],val[0][1]],[val[1][0],val[1][1]])  #  {'Blue Pens':[[1,1],[1,2],501],...}
+
+        #  Call updateSpeedometer() to draw the speed for each k,v in speedometerDict. Takes final value (val[2] which is 501)
+        #  from dict to draw correct speed ('Blue Pens':[[1,1],[1,2],501],...}), also sends the counter to so that updateSpeedometer can access the correct
+        #  canvas from the self.canvases
+        for k , val in self.speedometerDict.items():
+            self.updateSpeedometer(val[2],self.circleOrigin[0], self.circleOrigin[1],self.circleOrigin[2],count)
+            count+=1
+
+    def updateConfigFile(self):
+        """
+        This method writes the speedometerDict into the config.txt file
+        """
+        with open('config.txt', 'wb') as f:
+            p.dump(self.speedometerDict, f)
+
+
+    def calcCircleOrigin(self, x1, y1, x2, y2):
+        """
+        calculates the speedometer's important circle values: radius, and coordinates of origin
+        inputs: x1,y1,x2,y2 of the containing box for the circle: upper left and lower right coordinates
+        Outputs: list of the speedometer's circle values: [xOrigin,yOrigin, radius]
+        """
+        x = (x1 + x2) / 2
+        y = (y1 + y2) / 2
+        radius = (x2 - x1) / 2
+
+        return [x, y, radius]
+
+
+    def drawCircle(self,itemName, LabRowCol,cirRowCol):
+        """
+        inputs:
+        itemName: str of the stock item's name
+        LabRowCol: list of 2 ints for label's row and col placement [row,col]
+        cirRowCol: list of 2 ints for speedometer's row and col placement [row,col]
+         """
+
+        # Create canvas object and label object and place them into their respective lists
+        self.canvases.append(Canvas(self.frame2, width=150, height=100, bg='white'))
+        self.labels.append(Label(self.frame2, width=9, text=itemName))
+
+        # Access the last item in the canvases list, draw a circle with it, then grid it to the screen
+        self.canvases[-1].create_oval(self.circProp[0], self.circProp[1],self.circProp[2],self.circProp[3],width=self.circProp[4])
+        self.canvases[-1].grid(row=cirRowCol[0], column=cirRowCol[1], sticky='nse')
+
+        # Access the last item in the labels list and grid it to the screen
+        self.labels[-1].grid(row=LabRowCol[0], column=LabRowCol[1], sticky='nse')
+
+    def colourChanger(self):
+        '''
+        This method changes the colour for the speedometer dial. It does not yet work properly;
+        it simply returns the same colour every time
+        '''
+        colour = '#' + str(111111 + 10)
+        return colour
+
+    def updateSpeedometer(self, speed, XcircleOrigin, YCircleOrigin, radius,listIndexCounter):
+        radius = radius - 5  # subtract width of circle's outline + extra to keep clear space from circle's outline
+        list1 = []  # list for storing all coordinates
+        speed += 1  # add 1 to speed so that the call to speedometer can be done with round numbers, ex 90
+
+        #  calculate the coordinates of circle's circumference
+        for deg in range(320, speed):
+            x = XcircleOrigin - (radius * (math.cos(numpy.round(numpy.deg2rad(deg),2))))  # calc coordinate of x and y on circle's circum. xCoordOfOrigin - (rad. * cos(deg))
+            y = YCircleOrigin - (radius * (math.sin(numpy.round(numpy.deg2rad(deg),2))))  # yCoordOfOrigin - (rad. * sin(deg)
+            list1.append((numpy.round(x,2),numpy.round(y,2)))  # [(x,y),(x,y),(x,y)...
+
+
+        for i in range(0, len(list1),2):  # move in steps of two, 0,2,4,6
+
+            tup = list1[i]  # cache first tup of coordinates, for white colour line (to erase purple line); currently not used, line is not being erased
+            nextTup = list1[i+1]  # cache next tup of coord. for purple line
+
+            # print(self.colourChanger())
+            self.canvases[listIndexCounter].create_line(XcircleOrigin, YCircleOrigin,nextTup[0],nextTup[1], fill=self.colourChanger(), width=3)  # draw line in circle; values: x and Y of both  ends of line (1st point: horiz, verti, end point horiz, vert.
+            self.master.update()
+
+
+    def runResults(self):
+
+        self.c.create_line(55, 55, x, y, fill='purple', width=3)  # draw line in circle; values: x and Y of both  ends of line (1st point: horiz, verti, end point horiz, vert.
+        self.master.update()
+
+        # x(t) = r cos(t) + j
+        # y(t) = r sin(t) + k
+
+        btn = ttk.Button(self.master)
+        print(btn.configure().keys())
+        print(self.frame1.configure().keys())
+        # print(dir(self.frame1))
+
+
+def main():
+    root = Tk()
+    MainWindow(root)
+
+    root.mainloop()
+
+
+main()
