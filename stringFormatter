@@ -1,0 +1,28 @@
+
+
+
+
+labelWidth = 9
+
+
+def itemNameFormatter(itemName):
+
+    string = ''
+    cacheList = []
+    listOfTerms = itemName.split()
+
+    for term in listOfTerms:
+        if len(term) > labelWidth-1:
+            cacheList.append(string + term + '\n')
+            string = term
+        else:
+            if len(string) + 1 + len(term) > labelWidth-1:
+                cacheList.append(string + '\n')
+                string = ''
+            else:
+                string = string + ' ' + term
+    cacheList.append(string)
+    return cacheList
+
+print(itemNameFormatter('Here is a short test string'))
+
