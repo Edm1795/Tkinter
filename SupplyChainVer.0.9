@@ -80,6 +80,7 @@ import time
 
 #  19. Next, get proper calculation of box widget size.  Need to instantiate one label w/o posting it and then get its pixel width
 #  20. removed extraneous entry widgets; adjusted size of buttons, attempted to make a clearFrame() which is not working properly
+#  21.  Added grid_propogate(0) to frame 1 and 2 to fix size of frames while inputting widgets (Jen's great discovery).
 
 class MainWindow:
     def __init__(self, master):
@@ -105,10 +106,13 @@ class MainWindow:
         self.frame2.grid(row=1, column=1, columnspan=1, sticky="nsew")
 
         # configure weighting of frames
-        self.master.grid_columnconfigure(0, weight=1) # Allows frames to expand as master window expands; weight tells how much of the columns it takes
-        self.master.grid_columnconfigure(1, weight=3) #  weight gives 3 times as much column as the other columns
+        self.master.grid_columnconfigure(0, weight=1) #  First int refers to column numberAllows frames to expand as master window expands; weight tells how much of the columns it takes
+        self.master.grid_columnconfigure(1, weight=7) #  weight gives 3 times as much column as the other columns
         # self.master.grid_columnconfigure(2, weight=1)
         self.master.grid_rowconfigure(1, weight=1)  # rowconfigure states: first row takes 1 parts of space
+
+        self.frame1.grid_propagate(0)  #  When adding widgets maintain weighting of frames
+        self.frame2.grid_propagate(0)
 
         frameWidth = 10  # Units are in characters not pixels
 
@@ -138,7 +142,7 @@ class MainWindow:
         self.addItemButton = Button(self.frame1, text="Add Item", width= 12, command=self.addItem)
         self.addItemButton.pack()
 
-        self.clearFramesButton = Button(self.frame1, text="Clear Frames", width=12, command=self.clearFrame)
+        self.clearFramesButton = Button(self.frame1, text="Clear Frames", width=12, command=self.clearSpeedoFrame)  #  Clears frame2, the speedometer frame of all widgets
         self.clearFramesButton.pack()
 
        #  updateSpeedometer takes [xOrigin, yOrigin, radius]
@@ -197,9 +201,16 @@ class MainWindow:
             self.speedometerDict=p.load(f)
             print('The  speedometer dictionary has been loaded from the config file')
 
-    def clearFrame(self):
+    def clearSpeedoFrame(self):
+        """
+        This method clears the main frame (frame2) of all its widgets holding all the speedometers;
+        it also clears self.canvases list and the self.labels list so that new objects can be stored
+        inside those lists.
+        """
         for widgets in self.frame2.winfo_children():
             widgets.destroy()
+            self.canvases.clear()
+            self.labels.clear()
 
     def drawCircles(self):
         """
@@ -214,9 +225,11 @@ class MainWindow:
         # self.master.update()
         # print(labelTest.winfo_width())  ## output is 83 for labelWidth = 11
 
+        # self.clearSpeedoFrame()  # clears the main frame (frame2) of all its widgets
         row = 0
         col = 0
-        maxNumOfBoxes=(self.frame2.winfo_width()//180)*2  # get size of main frame (displaying speds), floor divide (//) by size of box,multiply by 2 b/c otherwise boxes will overlap due to nature of layout. 150 = canvas width, 83 = labelWidth. note the calculated values do not work well, hence using 180 as total
+        x = self.frame2.winfo_width()
+        maxNumOfBoxes=(self.frame2.winfo_width()//240)*2  # get size of main frame (displaying speds), floor divide (//) by size of box,multiply by 2 b/c otherwise boxes will overlap due to nature of layout. 150 = canvas width, 83 = labelWidth. note the calculated values do not work well, hence using 180 as total
         listIndexCounter=0
 
         # self.clearFrame()
@@ -225,17 +238,18 @@ class MainWindow:
         for k,val in self.speedometerDict.items():  #  {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...]]}
             if col < maxNumOfBoxes:  # Below the maximum of allowed boxes
                 self.drawCircle(k,[row,col],[row,col+1])  #  {'Blue Pens':[[1,1],[1,2],501],...} Note, only sends first two lists, not the final value 501.  Eg: [0,0],[0,1]... [0,2],[0,3]...[0,4],[0,5]
-                col+=2  # Increment by 2 so as not to overlap with previous boxes
+                col+=2  # Increment by 2 so as not to overlap with previous boxes  [0,0],[0,1]... [0,2],[0,3]...[0,4],[0,5]
             else:   # Above the maximum of allowed boxes, sets values for drawing on the next row on the screen and draws circles and labels for the first item of that row
-                col=0
-                row+=1
+                col=0  # rest col to 0 so next row starts at far left of screen
+                row+=1  # increment up to next row down
                 self.drawCircle(k,[row,col],[row,col+1])  #  {'Blue Pens':[[1,1],[1,2],501],...} Note, only sends first two lists, not the final value 501
-                col+=2  # Increment by 2 so as not to overlap with previous boxes
+                col+=2  # Increment by 2 so as not to overlap with previous boxes in the row [0,0],[0,1]... [0,2],[0,3]...[0,4],[0,5]
 
 
         for k , val in self.speedometerDict.items():  # draw in the dial showing speeds of each item sequentially
             self.updateSpeedometer(val[2],self.circleOrigin[0], self.circleOrigin[1],self.circleOrigin[2],listIndexCounter)  #  val[2] is the speed, listIndexCounter access the list of canvases holding the speedometers
             listIndexCounter+=1
+
 
     def updateConfigFile(self):
         """
