@@ -101,7 +101,7 @@ class MainWindow:
 
         # Master Window
         self.master = master
-        self.master.title('Supply Chain Ver. 0.9')
+        self.master.title('Supply Chain Ver. 0.93')
         self.master.geometry("+150+500")  # position of the window in the screen (200x300)
         self.master.geometry("1000x400")  # set initial size of the root window (master) (1500x700);
         # if not set, the frames will fill the master window
@@ -213,9 +213,9 @@ class MainWindow:
             Searches for the correct item in the SpeedometerDict then updates the amount of stock.
             """
             print(nameOfStock)
-            print('List of values before updating:', self.speedometerDict.items())
+            print('Initial Set of Values:', self.speedometerDict.items())
             self.speedometerDict[nameOfStock][2]=int(editItemEntry.get())
-            print('List of values after updating:', self.speedometerDict.items())
+            print('New Set of Values:  ', self.speedometerDict.items())
             # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
 
