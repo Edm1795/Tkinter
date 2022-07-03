@@ -181,18 +181,24 @@ class MainWindow:
         top = Toplevel(self.master)
         top.geometry("400x150")
         top.title("Add New Item")
+
         addItemLabel = Label(top, text="Add New Item", font=('Cambria 12'))  #  Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
         addItemLabel.grid(row=1, column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
+
         addItemEntry = Entry(top, width='40')
         addItemEntry.grid(row=1, column=2)
+
         addItemEntry.bind('<Return>', lambda event: addItemToSpeedometerDict())
 
         def addItemToSpeedometerDict():
 
             self.updateSpeedometerDict(addItemEntry.get())  # enter text from popup window to be used for name of item being added
             self.updateConfigFile()
+
             completionMes = Label(top, text=addItemEntry.get() + ' added to your list of items', font=('Cambria 12'))
             completionMes.grid(row=3, column=1)
+
+            addItemEntry.delete(0, END)  # Delete text in entry field
 
     def editItem(self,itemName):
         """
@@ -227,10 +233,13 @@ class MainWindow:
             completionMes = Label(top, text=nameOfStock + ' updated to ' + editItemEntry.get(), font=('Cambria 12'))
             completionMes.grid(row=3, column=1)
 
+            editItemEntry.delete(0,END)  # Delete text in entry field
+
             print('New Set of Values:  ', self.speedometerDict.items())
             # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
-
+    # def clear_text():
+    #     text.delete(0, END)
 
     def updateSpeedometerDict(self,newItemName):
         """
