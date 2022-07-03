@@ -101,7 +101,7 @@ class MainWindow:
 
         # Master Window
         self.master = master
-        self.master.title('Supply Chain Ver. 0.93')
+        self.master.title('Supply Chain Ver. 0.94')
         self.master.geometry("+150+500")  # position of the window in the screen (200x300)
         self.master.geometry("1000x400")  # set initial size of the root window (master) (1500x700);
         # if not set, the frames will fill the master window
@@ -202,19 +202,31 @@ class MainWindow:
         top = Toplevel(self.master)
         top.geometry("400x150")
         top.title("Edit Quantity of Stock")
-        editItemLabel = Label(top, text="New Quantity of Stock", font=('Cambria 12'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
-        editItemLabel.grid(row=1,column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
-        editItemEntry = Entry(top, width='40')
-        editItemEntry.grid(row=1, column=2)
+
+        editItemLabelTitle = Label(top, text=itemName, font=('Cambria 14'))
+        editItemLabel = Label(top, text="New Value", font=('Cambria 12'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+
+        editItemLabelTitle.grid(row=1,column=1)
+        editItemLabel.grid(row=2,column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
+
+        editItemEntry = Entry(top, width='10')
+
+        editItemEntry.grid(row=2, column=2)
         editItemEntry.bind('<Return>', lambda event: updateQuantityInSpeedometerDict(itemName)) # send the itemName to the updateQuantity function
 
         def updateQuantityInSpeedometerDict(nameOfStock):
             """
             Searches for the correct item in the SpeedometerDict then updates the amount of stock.
+            Inputs: str: nameOfStock, which gives the name of the item in the dict to be updated, {'Blue Pens': [[1,1],[1,2],101]} the third value is accessed ie. 101.
             """
             print(nameOfStock)
             print('Initial Set of Values:', self.speedometerDict.items())
-            self.speedometerDict[nameOfStock][2]=int(editItemEntry.get())
+
+            self.speedometerDict[nameOfStock][2]=int(editItemEntry.get())  # update value in speedometerdict to value given in popup window
+
+            completionMes = Label(top, text=nameOfStock + ' updated to ' + editItemEntry.get(), font=('Cambria 12'))
+            completionMes.grid(row=3, column=1)
+
             print('New Set of Values:  ', self.speedometerDict.items())
             # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
