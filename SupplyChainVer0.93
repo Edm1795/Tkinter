@@ -4,8 +4,14 @@ import math
 import numpy
 import pickle as p
 import time
-############## Key Values for Program #################
+
+###### Helpful for Navigating ############
+
 # alt 2 --> opens book marks, shift F11, opens floating window
+# See all latest changes, right click, local history --> show history ( near bottom of menu)
+
+############## Key Values for Program #################
+
 ######  Label's showing name of items:
 #  self.labelWidth -------- inside itemNameFormatter()
 
@@ -95,6 +101,9 @@ import time
 #  19. Next, get proper calculation of box widget size.  Need to instantiate one label w/o posting it and then get its pixel width
 #  20. removed extraneous entry widgets; adjusted size of buttons, attempted to make a clearFrame() which is not working properly
 #  21.  Added grid_propogate(0) to frame 1 and 2 to fix size of frames while inputting widgets (Jen's great discovery).
+# 22. Improved much of the documentation
+# 24. Changed some values on how the speeds are drawn in the circle: 1. now it increments through its loop in units of 1, rather than 2 which makes for a smoother 
+# turn of the circle. 2. This also lets even numbers be used for the max stock (now 578= max). 3. This makes setting up the stock divisions simpler mathematically.
 
 class MainWindow:
     def __init__(self, master):
@@ -440,10 +449,10 @@ class MainWindow:
             list1.append((numpy.round(x,2),numpy.round(y,2)))  # [(x,y),(x,y),(x,y)...
 
 
-        for i in range(0, len(list1),2):  # move in steps of two, 0,2,4,6
+        for i in range(0, len(list1),1):  # move in steps of two, 0,2,4,6
 
-            tup = list1[i]  # cache first tup of coordinates, for white colour line (to erase purple line); currently not used, line is not being erased
-            nextTup = list1[i+1]  # cache next tup of coord. for purple line
+            #tup = list1[i]  # cache first tup of coordinates, for white colour line (to erase purple line); currently not used, line is not being erased
+            nextTup = list1[i]  # cache next tup of coord. for purple line
 
             colour += 50  # increment colour of speedometer dial to a new colour for each line. 40 gives nice blue to aqua change.  def colourChanger() is also available but not working
             self.canvases[listIndexCounter].create_line(XcircleOrigin, YCircleOrigin,nextTup[0],nextTup[1], fill='#'+str(colour), width=3)  # draw line in circle; values: x and Y of both  ends of line (1st point: horiz, verti, end point horiz, vert. 579 = full stock
