@@ -105,6 +105,10 @@ import time
 # 24. Changed some values on how the speeds are drawn in the circle: 1. now it increments through its loop in units of 1, rather than 2 which makes for a smoother
 # turn of the circle. 2. This also lets even numbers be used for the max stock (now 578= max). 3. This makes setting up the stock divisions simpler mathematically.
 
+# Ver. 0.94
+# 25. added Def calcSpeed() which calculates the correct speed relative to what is full stock.  Eg: if 3 boxes = full stock, it will output 578 km/h (shown as 100 on
+# the interface). 
+
 class MainWindow:
     def __init__(self, master):
 
