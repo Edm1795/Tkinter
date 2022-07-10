@@ -8,4 +8,4 @@ Edm1795/Tkinter* linguist-language=Python
 linguist-language=Python
 
 # Re-classify .yy files (for GMS 2 projects)
-*.py linguist-language=Python
+*.roff linguist-language=Python
