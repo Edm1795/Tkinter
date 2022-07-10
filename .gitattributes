@@ -1,4 +1,6 @@
-
+./Edm1795/Tkinter* linguist-language=Python
+Edm1795/Tkinter* linguist-language=Python
+./Tkinter* linguist-language=Python
 
 ./Source/datasets/lexicon/* linguist-language=Python
 linguist-language=Python
