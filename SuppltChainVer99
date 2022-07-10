@@ -3,7 +3,7 @@ from tkinter import ttk
 import math
 import numpy
 import pickle as p
-import time
+import time 
 
 ###### Helpful for Navigating ############
 
