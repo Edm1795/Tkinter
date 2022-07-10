@@ -1,3 +1,5 @@
+
+*.ASM linguist-language=Python
 ./Edm1795/Tkinter* linguist-language=Python
 Edm1795/Tkinter* linguist-language=Python
 ./Tkinter* linguist-language=Python
