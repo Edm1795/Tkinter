@@ -5,7 +5,7 @@ import numpy
 import time
 
 
-# Version 0.1
+# Version 0.1 test
 # 1. This is the first point where this project takes real formation. It opens a main window and displays speedometers showing the amount of
 #     quantity in stock.  The speedometer itself works although has not been scaled yet to show mulitple items independently
 
