@@ -116,7 +116,7 @@ import time
 #             setMaxStockEntry.delete(0, END)  # Delete text in entry field
 #             addItemEntry.delete(0,END)  # Delete text in entry field. (Note, This deletes the value inside the Entry itself not merely clearing the screen.)
 # to be together inside the addMaxStockValue() function so both are deleted at the same spot and also so that the Entry field contents is still usable when needed
-# for populating the dictionary Stock and Unit Value.
+# for populating the dictionary StockandUnitValue.
 
 class MainWindow:
     def __init__(self, master):
