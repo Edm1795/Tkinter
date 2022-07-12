@@ -8,6 +8,7 @@ import time
 ###### Helpful for Navigating ############
 
 # alt 2 --> opens book marks, shift F11, opens floating window
+# alt 7 --> structure of code
 # See all latest changes, right click, local history --> show history ( near bottom of menu)
 
 ############## Key Values for Program #################
@@ -161,7 +162,7 @@ class MainWindow:
         # self.drawCircleEntry = Entry(self.frame1, width='15')
         # self.drawCircleEntry.pack()
 
-        # 320 = no stock; 578 = full stock. 258 = full range of values from no stock to full stock
+        #######     320 = no stock                 578 = full stock                  258 = full range of values from no stock to full stock  ########
         # list of all speedometer's and item names. Structure:  #  {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...],Quantity of Item]}
         self.speedometerDict = {'Blue Pens':[[1,1],[1,2],501],'Staedtler Pens':[[1,3],[1,4],411],'China Markers':[[1,5],[1,6],401],'Red Pens':[[1,7],[1,8],330],'Paper Clips':[[1,9],[1,10],320],'White Tape':[[1,11],[1,12],501],'Golf Pencils':[[1,13],[1,14],401],'Scissors':[[2,1],[2,2],421],'Transparent Name Tag Slips (Small)':[[2,3],[2,4],380]}
         self.stockAndUnitValueDict ={'Blue Pens': [3,86]} # dictionary with list of 2 values [number of items constituting max stock, unit of speed for each item] Eg: 3 items = max stock, each item takes 86 km/h of speed
@@ -231,19 +232,22 @@ class MainWindow:
             completionMes = Label(top, text=addItemEntry.get() + ' added to your list of items', font=('Cambria 12'))
             completionMes.grid(row=3, column=1)
 
-            addItemEntry.delete(0, END)  # Delete text in entry field
+            # addItemEntry.delete(0, END)  # Delete text in entry field. (Note, This deletes the value inside the Entry itself not merely clearing the screen.)
 
         def addMaxStockValue(): # add max stock to self.stockAndUnitValueDict
 
             # self.updateSpeedometerDict(addItemEntry.get())  # enter text from popup window to be used for name of item being added
             # self.updateConfigFile()
 
-            self.updateStockAndUnitValueDict(setMaxStockEntry.get(),addItemEntry.get()) # write max stock and set unit value for the given item to the dict.
+            self.updateStockAndUnitValueDict(int(setMaxStockEntry.get()),addItemEntry.get()) # write max stock and set unit value for the given item to the dict.
 
             completionMes = Label(top, text=setMaxStockEntry.get() + ' set as max stock', font=('Cambria 12'))
             completionMes.grid(row=4, column=1)
 
             setMaxStockEntry.delete(0, END)  # Delete text in entry field
+            addItemEntry.delete(0,END)  # Delete text in entry field. (Note, This deletes the value inside the Entry itself not merely clearing the screen.)
+
+            print(self.stockAndUnitValueDict.items())
 
         def combineAddItemAndMaxStock():
             addItemToSpeedometerDict()
@@ -257,6 +261,7 @@ class MainWindow:
         '''
         self.stockAndUnitValueDict.update({nameOfItem: [0,0]}) # instantiate item in dictionary with placeholder values of 0,0, [max stock value,unit of stock value]
         self.stockAndUnitValueDict[nameOfItem][0] = maxStock
+        self.stockAndUnitValueDict[nameOfItem][1] = 258/maxStock  # 258 is the total range of speed
 
 
 
