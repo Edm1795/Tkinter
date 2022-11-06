@@ -121,6 +121,8 @@ import pickle as p
 
 # Ver 0.96 (start considering actual program flow from the very beginning of a user building inventory
 # 28. Empty the speedometerDict (which holds all key values of items) and build it sequentially from the user interface.
+# 29. added clearSpeedoframes() to drawCircles() method in order to fix drawing of speeds. originally if you pressed update speds more than once, it would not properly
+# draw those speeds but would leave them all white.
 
 class MainWindow:
     def __init__(self, master):
@@ -363,7 +365,7 @@ class MainWindow:
         # self.master.update()
         # print(labelTest.winfo_width())  ## output is 83 for labelWidth = 11
 
-        # self.clearSpeedoFrame()  # clears the main frame (frame2) of all its widgets
+        self.clearSpeedoFrame()  # clears the main frame (frame2) of all its widgets (without this clearing function, the speeds will not show when re-drawn a second time...)
         row = 0
         col = 0
         x = self.frame2.winfo_width()
@@ -386,6 +388,7 @@ class MainWindow:
         self.calcSpeed() # calculates the proper speed for each item and updates the speedometerDict with those proper speeds
 
         for k , val in self.speedometerDict.items():  # draw in the dial showing speeds of each item sequentially
+            print(val)
             self.updateSpeedometer(val[2],self.circleOrigin[0], self.circleOrigin[1],self.circleOrigin[2],listIndexCounter)  #  val[2] is the speed, listIndexCounter access the list of canvases holding the speedometers
             listIndexCounter+=1
 
