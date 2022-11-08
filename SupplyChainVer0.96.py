@@ -12,6 +12,13 @@ import pickle as p
 # See all latest changes, right click, local history --> show history ( near bottom of menu)
 # ctrl + Shift + E = recently changed code
 
+########## Commit ##############
+# select commit at top right (green arrow)
+# Select name of file to commit
+# Write in comments
+# press commit and push
+# press push
+
 ############## Key Values for Program ##############
 
 ############## Label's showing name of items ##############
