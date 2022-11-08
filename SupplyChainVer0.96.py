@@ -123,6 +123,9 @@ import pickle as p
 # 28. Empty the speedometerDict (which holds all key values of items) and build it sequentially from the user interface.
 # 29. added clearSpeedoframes() to drawCircles() method in order to fix drawing of speeds. originally if you pressed update speds more than once, it would not properly
 # draw those speeds but would leave them all white.
+# 30. Delete speedomterdict contents
+
+
 
 class MainWindow:
     def __init__(self, master):
@@ -174,8 +177,8 @@ class MainWindow:
         # self.drawCircleEntry.pack()
 
         #######     320 = no stock                 578 = full stock                  258 = full range of values from no stock to full stock  ########
-        # list of all speedometer's and item names. Structure:  #  {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...],Quantity of Item]}
-        self.speedometerDict = {'Blue Pens':[[1,1],[1,2],501],'Staedtler Pens':[[1,3],[1,4],411],'China Markers':[[1,5],[1,6],401],'Red Pens':[[1,7],[1,8],330],'Paper Clips':[[1,9],[1,10],320],'White Tape':[[1,11],[1,12],501],'Golf Pencils':[[1,13],[1,14],401],'Scissors':[[2,1],[2,2],421],'Transparent Name Tag Slips (Small)':[[2,3],[2,4],380]}
+        # list of all speedometer's and item names. eg: {'Blue Pens':[[1,1],[1,2],501],'Staedtler Pens':[[1,3],[1,4],411], Structure: {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...],Quantity of Item]}
+        self.speedometerDict = {}
         self.stockAndUnitValueDict ={'Blue Pens': [3,86]} # dictionary with list of 2 values [number of items constituting max stock, unit of speed for each item] Eg: 3 items = max stock, each item takes 86 km/h of speed
 
         self.circProp = (20,20,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
@@ -326,9 +329,10 @@ class MainWindow:
 
           :param newItemName:  str: name of new item to add
           """
-        lastValue = list(self.speedometerDict.values())[-1]  # get last value from dict (list of lists: :[label(row,col):[2,5],circle(row,col):[2,6]],quantity:583]) from dict. [[1, 13], [1, 14], 401])
-        # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
-        self.speedometerDict.update({newItemName: [[2, lastValue[0][1] + 2], [2, lastValue[1][1] + 2],578]})  
+        lastValue = list(self.speedometerDict.values())[
+            -1]  # get last value from dict (list of lists: :[label(row,col):[2,5],circle(row,col):[2,6]],quantity:583]) from dict. [[1, 13], [1, 14], 401])
+        self.speedometerDict.update({newItemName: [[2, lastValue[0][1] + 2], [2, lastValue[1][1] + 2],
+                                                   578]})  # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
         print(self.speedometerDict.items())
 
 
