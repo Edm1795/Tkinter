@@ -261,7 +261,8 @@ class MainWindow:
             # self.updateSpeedometerDict(addItemEntry.get())  # enter text from popup window to be used for name of item being added
             # self.updateConfigFile()
 
-            self.updateStockAndUnitValueDict(int(setMaxStockEntry.get()),addItemEntry.get()) # write max stock and set unit value for the given item to the dict.
+            # write max stock and set unit value for the given item to the dict.
+            self.updateStockAndUnitValueDict(int(setMaxStockEntry.get()),addItemEntry.get())
 
             completionMes = Label(top, text=setMaxStockEntry.get() + ' set as max stock', font=('Cambria 12'))
             completionMes.grid(row=4, column=1)
