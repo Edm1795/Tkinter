@@ -131,7 +131,7 @@ import pickle as p
 # 29. added clearSpeedoframes() to drawCircles() method in order to fix drawing of speeds. originally if you pressed update speds more than once, it would not properly
 # draw those speeds but would leave them all white.
 # 30. Delete speedomterdict contents
-# 31. fix index error when adding first item to speedometerDict.
+# 31. fix index error when adding first item to updateSpeedometerDict.
 
 
 
@@ -337,11 +337,16 @@ class MainWindow:
 
           :param newItemName:  str: name of new item to add
           """
-        lastValue = list(self.speedometerDict.values())[
-            -1]  # get last value from dict (list of lists: :[label(row,col):[2,5],circle(row,col):[2,6]],quantity:583]) from dict. [[1, 13], [1, 14], 401])
-        self.speedometerDict.update({newItemName: [[2, lastValue[0][1] + 2], [2, lastValue[1][1] + 2],
-                                                   578]})  # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
-        print(self.speedometerDict.items())
+
+        # If the item being added is the very first to the dictionary, place item in first spot on interface grid
+        if len(self.speedometerDict)==0:
+            self.speedometerDict.update({newItemName: [[1, 0], [1, 1],578]})
+        else: # If item is not the first, place it after the last item
+            # get last value from dict (list of lists: :[label(row,col):[2,5],circle(row,col):[2,6]],quantity:583]) from dict. [[1, 13], [1, 14], 401])
+            lastValue = list(self.speedometerDict.values())[-1]
+            # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
+            self.speedometerDict.update({newItemName: [[2, lastValue[0][1] + 2], [2, lastValue[1][1] + 2],578]})
+            print(self.speedometerDict.items())
 
 
     def loadSpeedometerDict(self):
