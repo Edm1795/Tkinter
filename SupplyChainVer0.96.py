@@ -326,10 +326,9 @@ class MainWindow:
 
           :param newItemName:  str: name of new item to add
           """
-        lastValue = list(self.speedometerDict.values())[
-            -1]  # get last value from dict (list of lists: :[label(row,col):[2,5],circle(row,col):[2,6]],quantity:583]) from dict. [[1, 13], [1, 14], 401])
-        self.speedometerDict.update({newItemName: [[2, lastValue[0][1] + 2], [2, lastValue[1][1] + 2],
-                                                   578]})  # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
+        lastValue = list(self.speedometerDict.values())[-1]  # get last value from dict (list of lists: :[label(row,col):[2,5],circle(row,col):[2,6]],quantity:583]) from dict. [[1, 13], [1, 14], 401])
+        # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
+        self.speedometerDict.update({newItemName: [[2, lastValue[0][1] + 2], [2, lastValue[1][1] + 2],578]})  
         print(self.speedometerDict.items())
 
 
