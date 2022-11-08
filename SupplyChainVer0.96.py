@@ -124,7 +124,7 @@ import pickle as p
 # 29. added clearSpeedoframes() to drawCircles() method in order to fix drawing of speeds. originally if you pressed update speds more than once, it would not properly
 # draw those speeds but would leave them all white.
 # 30. Delete speedomterdict contents
-# 31. fix index error when adding first item to speedometerDict
+# 31. fix index error when adding first item to speedometerDict.
 
 
 
