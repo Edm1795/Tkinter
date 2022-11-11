@@ -29,6 +29,9 @@ import pickle as p
 #  cavasHeight ------ inside itemNameFormatter()
 
 # self.speedometerDict ----- The dict which holds the values of each item in stock, {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...],amount of stock]}
+# self.stockAndUnitValueDict ={'Blue Pens': [3,86]} # dictionary with list of 2 values [number of items constituting max stock, unit of speed for each item] Eg: 3 items = max stock, each item takes 86 km/h of speed
+
+
 
 # Version 0.1
 # 1. This is the first point where this project takes real formation. It opens a main window and displays speedometers showing the amount of
@@ -188,7 +191,7 @@ class MainWindow:
         #######     320 = no stock                 578 = full stock                  258 = full range of values from no stock to full stock  ########
         # list of all speedometer's and item names. eg: {'Blue Pens':[[1,1],[1,2],501],'Staedtler Pens':[[1,3],[1,4],411], Structure: {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...],Quantity of Item]}
         self.speedometerDict = {}
-        self.stockAndUnitValueDict ={'Blue Pens': [3,86]} # dictionary with list of 2 values [number of items constituting max stock, unit of speed for each item] Eg: 3 items = max stock, each item takes 86 km/h of speed
+        self.stockAndUnitValueDict ={} # dictionary with key and list with 2 values [number of items constituting max stock, unit of speed for each item] Eg: 3 items = max stock, each item takes 86 km/h of speed
 
         self.circProp = (20,20,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
         self.circleOrigin = self.calcCircleOrigin(self.circProp[0],self.circProp[1],self.circProp[2],self.circProp[3])  # Returns a list of speedometer's values used for drawing line: [xOrigin, yOrigin, radius, width]
