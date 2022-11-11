@@ -132,6 +132,7 @@ import pickle as p
 # draw those speeds but would leave them all white.
 # 30. Delete speedomterdict contents
 # 31. fix index error when adding first item to updateSpeedometerDict.
+# 32. Round values of stock to whole numbers then insert them into the speedometerdict (key fix)
 
 
 
@@ -215,9 +216,10 @@ class MainWindow:
         # self.text1.config(yscrollcommand=sb.set)
         # sb.config(command=self.text1.yview)
 
-    def calcSpeed(self):
-        speedOfItem = (self.stockAndUnitValueDict['Blue Pens'][0] * self.stockAndUnitValueDict['Blue Pens'][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
-        self.speedometerDict['Blue Pens'][2]=speedOfItem # add loop to check every k,v, if k == itemName: v = speedOfItem
+    def calcSpeed(self,k):
+        speedOfItem = (self.stockAndUnitValueDict[k][0] * self.stockAndUnitValueDict[k][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
+        self.speedometerDict[k][2]=round(speedOfItem) # Round value of stock to whole number then insert into dictionary
+        # add loop to check every k,v, if k == itemName: v = speedOfItem
 
     def addItem(self):
         """
@@ -402,9 +404,10 @@ class MainWindow:
                 self.drawCircle(k,[row,col],[row,col+1])  #  {'Blue Pens':[[1,1],[1,2],501],...} Note, only sends first two lists, not the final value 501
                 col+=2  # Increment by 2 so as not to overlap with previous boxes in the row [0,0],[0,1]... [0,2],[0,3]...[0,4],[0,5]
 
-        self.calcSpeed() # calculates the proper speed for each item and updates the speedometerDict with those proper speeds
+            self.calcSpeed(k) # calculates the proper speed for each item and updates the speedometerDict with those proper speeds
 
-        for k , val in self.speedometerDict.items():  # draw in the dial showing speeds of each item sequentially
+        # draw in the dial showing speeds of each item sequentially. val[2] is the speed
+        for k , val in self.speedometerDict.items():
             print(val)
             self.updateSpeedometer(val[2],self.circleOrigin[0], self.circleOrigin[1],self.circleOrigin[2],listIndexCounter)  #  val[2] is the speed, listIndexCounter access the list of canvases holding the speedometers
             listIndexCounter+=1
@@ -536,7 +539,7 @@ class MainWindow:
             x = XcircleOrigin - (radius * (math.cos(numpy.round(numpy.deg2rad(deg),2))))  # calc coordinate of x on circle's circum. xCoordOfOrigin - (rad. * cos(deg))
             y = YCircleOrigin - (radius * (math.sin(numpy.round(numpy.deg2rad(deg),2))))  # calc y Coord on circle's circum. yCoordOfOrigin - (rad. * sin(deg)
             list1.append((numpy.round(x,2),numpy.round(y,2)))  # [(x,y),(x,y),(x,y)...
-
+        print('this is list1',list1)
 
         for i in range(0, len(list1),1):  # move in steps of two, 0,2,4,6
 
