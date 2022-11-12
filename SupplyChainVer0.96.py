@@ -33,7 +33,16 @@ import pickle as p
 
 ######## Appearance ###########
 
+### Labels showing name of item ###
+# self.labels.append(Label(self.frame2, width=self.labelWidth, text=itemNameFormatter(itemName), bg="#121212", fg="white")) fg is text colour
+
+
+## Speedometers ##
 # c = Canvas(self.frame2, width=canvasWidth, height=cavasHeight, bg='white')  # Create canvas for speedometer (right side holding actual speeds)
+
+### Pop Up Windows
+# Add Item pop up         top = Toplevel(self.master)  # add bg="#373738" for colour
+
 
 
 # Version 0.1
@@ -147,7 +156,7 @@ class MainWindow:
 
         # Master Window
         self.master = master
-        self.master.title('Supply Chain Ver. 0.96 closer to real user testing')
+        self.master.title('Supply Chain Ver. 0.96 Near to Release')
         self.master.geometry("+150+500")  # position of the window in the screen (200x300)
         self.master.geometry("1000x400")  # set initial size of the root window (master) (1500x700);
         # if not set, the frames will fill the master window
@@ -232,7 +241,7 @@ class MainWindow:
         This function opens up a popup window, takes text from the user and adds that text as an item to the Speedometer Dictionary;
         it also updates the config file so that the item is permanently saved
         """
-        top = Toplevel(self.master)
+        top = Toplevel(self.master)  # add bg="#373738" for colour
         top.geometry("400x150")
         top.title("Add New Item")
 
@@ -484,8 +493,8 @@ class MainWindow:
 
         c = Canvas(self.frame2, width=canvasWidth, height=cavasHeight, bg='white')  # Create canvas for speedometer (right side holding actual speeds)
         c.create_oval(self.circProp[0], self.circProp[1],self.circProp[2],self.circProp[3],width=self.circProp[4])
-        c.create_text(18, 75, text="0", fill="black",font=('Helvetica 10'))                                  # draw "0" to left bottom of speedometer
-        c.create_text(87, 75, text="100", fill="black",font=('Helvetica 10'))                             # draw "100" to right bottom of speedometer
+        c.create_text(18, 75, text="0", fill="black",font=('Helvetica 10'))   # draw "0" to left bottom of speedometer
+        c.create_text(87, 75, text="100", fill="black",font=('Helvetica 10'))  # draw "100" to right bottom of speedometer
 
 
         # create and place edit button for editing values of the stock item
@@ -496,7 +505,7 @@ class MainWindow:
         self.canvases.append(c)  # append the canvas to list
 
         # self.canvases.append(Canvas(self.frame2, width=canvasWidth, height=cavasHeight, bg='white'))
-        self.labels.append(Label(self.frame2, width=self.labelWidth, text=itemNameFormatter(itemName)))
+        self.labels.append(Label(self.frame2, width=self.labelWidth, text=itemNameFormatter(itemName),bg="#121212",fg="white"))
 
         # Access the last item (most recently appended element) in the canvases list, draw a circle with it, then grid it to the screen
         # self.canvases[-1].create_oval(self.circProp[0], self.circProp[1],self.circProp[2],self.circProp[3],width=self.circProp[4])
@@ -510,11 +519,6 @@ class MainWindow:
 
         # Access the last item in the labels list and grid it to the screen
         self.labels[-1].grid(row=LabRowCol[0], column=LabRowCol[1], sticky='nse')
-
-
-
-
-
 
     def colourChanger(self):
         '''
