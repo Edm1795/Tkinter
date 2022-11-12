@@ -31,6 +31,9 @@ import pickle as p
 # self.speedometerDict ----- The dict which holds the values of each item in stock, {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...],amount of stock]}
 # self.stockAndUnitValueDict ={'Blue Pens': [3,86]} # dictionary with list of 2 values [number of items constituting max stock, unit of speed for each item] Eg: 3 items = max stock, each item takes 86 km/h of speed
 
+######## Appearance ###########
+
+# c = Canvas(self.frame2, width=canvasWidth, height=cavasHeight, bg='white')  # Create canvas for speedometer (right side holding actual speeds)
 
 
 # Version 0.1
@@ -153,8 +156,8 @@ class MainWindow:
         screenHeight = self.master.winfo_screenheight()
 
         # Instantiate frames
-        self.frame0 = Frame(self.master, bd=5, padx=5, bg='#448833')  # Top long row
-        self.frame1 = Frame(self.master, bd=5, padx=5, bg='#115533')  # Side Column
+        self.frame0 = Frame(self.master, bd=5, padx=5, bg='#606266')  # Top long row
+        self.frame1 = Frame(self.master, bd=5, padx=5, bg='#2a2b2b')  # Side Column
         self.frame2 = Frame(self.master, bd=5, padx=5,bg='#114466')  # Main frame
 
         # Place frames
@@ -479,7 +482,7 @@ class MainWindow:
 
         # Create canvas object and label object and place them into their respective lists
 
-        c = Canvas(self.frame2, width=canvasWidth, height=cavasHeight, bg='white')       # Create canvas for speedometer
+        c = Canvas(self.frame2, width=canvasWidth, height=cavasHeight, bg='white')  # Create canvas for speedometer (right side holding actual speeds)
         c.create_oval(self.circProp[0], self.circProp[1],self.circProp[2],self.circProp[3],width=self.circProp[4])
         c.create_text(18, 75, text="0", fill="black",font=('Helvetica 10'))                                  # draw "0" to left bottom of speedometer
         c.create_text(87, 75, text="100", fill="black",font=('Helvetica 10'))                             # draw "100" to right bottom of speedometer
