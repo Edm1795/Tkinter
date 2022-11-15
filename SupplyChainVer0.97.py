@@ -232,7 +232,7 @@ class MainWindow:
         # self.text1.config(yscrollcommand=sb.set)
         # sb.config(command=self.text1.yview)
 
-        self.loadSpeedometerDict()  # Load up all items from speedometerDict from config file
+        self.loadSpeedometerDict()  # Load up all items from speedometerDict from config file and config2
 
     def calcSpeed(self,k):
         speedOfItem = (self.stockAndUnitValueDict[k][0] * self.stockAndUnitValueDict[k][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
@@ -269,7 +269,7 @@ class MainWindow:
         def addItemToSpeedometerDict():
 
             self.updateSpeedometerDict(addItemEntry.get())  # enter text from popup window to be used for name of item being added
-            self.updateConfigFile()
+            self.updateConfigFile()  # update the config file with the new item so that it is saved for the next time opening the program
 
             completionMes = Label(top, text=addItemEntry.get() + ' added to your list of items', font=('Cambria 12'))
             completionMes.grid(row=3, column=1)
@@ -306,6 +306,7 @@ class MainWindow:
         self.stockAndUnitValueDict[nameOfItem][0] = maxStock
         self.stockAndUnitValueDict[nameOfItem][1] = 258/maxStock  # 258 is the total range of speed
 
+        print(self.stockAndUnitValueDict.items())
 
 
 
@@ -372,21 +373,21 @@ class MainWindow:
 
     def loadSpeedometerDict(self): # see updateConfigFile() for saving of files
         """
-        This method uses pickle to load the dictionary from config.txt into the speedometerDict
+        This method uses pickle to load the dictionaries from config.txt and config2.txt into the speedometerDict and stockAndunitValueDict
         """
         with open('config.txt', 'rb') as f:
             try:
                 self.speedometerDict=p.load(f)
             except:
-                self.StockAndUnitValueDict=None
-            print('The speedometer dictionary has been loaded from the config file')
+                self.speedometerDict={}
+            print('The speedometer dictionary has been loaded from the config file', self.speedometerDict.items())
 
         with open('config2.txt', 'rb') as f2:
             try:
-                self.StockAndUnitValueDict=p.load(f2)
+                self.stockAndUnitValueDict=p.load(f2)
             except:
-                self.StockAndUnitValueDict=None
-            print('The Stock dictionary has been loaded from the config2 file')
+                self.stockAndUnitValueDict={}
+            print('The Stock dictionary has been loaded from the config2 file',self.stockAndUnitValueDict.items())
 
 
     def clearSpeedoFrame(self):
@@ -449,7 +450,7 @@ class MainWindow:
         with open('config.txt', 'wb') as f:
             p.dump(self.speedometerDict, f)
         with open('config2.txt', 'wb') as f2:
-            p.dump(self.StockAndUnitValueDict, f2)
+            p.dump(self.stockAndUnitValueDict, f2)
 
     def calcCircleOrigin(self, x1, y1, x2, y2):
         """
