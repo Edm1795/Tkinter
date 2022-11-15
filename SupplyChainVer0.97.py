@@ -381,7 +381,7 @@ class MainWindow:
         # if os.path.exists(config.txt):  # Returns True if file exists
 
 
-        with open('config.txt', 'wb') as f: # use wb mode so if file does not exist, it will create one
+        with open('config.txt', 'wb') as f: # use wb mode so if file does not exist, it will create one, however it also will write over any data in the file
             try:
                 self.speedometerDict=p.load(f)
             except:
