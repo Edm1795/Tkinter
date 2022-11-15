@@ -3,11 +3,13 @@ from tkinter import ttk
 import math
 import numpy
 import pickle as p
-# import time
 
+#from os.path import exists
+
+# import time
 ############## Helpful for Navigating ##############
 
-# alt 2 --> opens book marks, shift F11, opens floating window
+# alt 2 --> opens book marks, shift F11, opens floating window.
 # alt 7 --> structure of code
 # See all latest changes, right click, local history --> show history ( near bottom of menu)
 # ctrl + Shift + E = recently changed code
@@ -375,14 +377,18 @@ class MainWindow:
         """
         This method uses pickle to load the dictionaries from config.txt and config2.txt into the speedometerDict and stockAndunitValueDict
         """
-        with open('config.txt', 'rb') as f:
+
+        # if os.path.exists(config.txt):  # Returns True if file exists
+
+
+        with open('config.txt', 'wb') as f: # use wb mode so if file does not exist, it will create one
             try:
                 self.speedometerDict=p.load(f)
             except:
                 self.speedometerDict={}
             print('The speedometer dictionary has been loaded from the config file', self.speedometerDict.items())
 
-        with open('config2.txt', 'rb') as f2:
+        with open('config2.txt', 'wb') as f2:
             try:
                 self.stockAndUnitValueDict=p.load(f2)
             except:
