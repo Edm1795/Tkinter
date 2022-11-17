@@ -3,8 +3,7 @@ from tkinter import ttk
 import math
 import numpy
 import pickle as p
-
-#from os.path import exists
+from os.path import exists
 
 # import time
 ############## Helpful for Navigating ##############
@@ -374,26 +373,54 @@ class MainWindow:
 
 
     def loadSpeedometerDict(self): # see updateConfigFile() for saving of files
+
         """
         This method uses pickle to load the dictionaries from config.txt and config2.txt into the speedometerDict and stockAndunitValueDict
         """
 
+<<<<<<< HEAD
+        # if exists('config.txt'):  # Returns True if file exists
+        #     with open('config.txt', 'r') as f1:  # use wb mode so if file does not exist, it will create one
+        #         self.speedometerDict=f1.readlines()
+        #         f1.close()
+        # else:
+        #     with open('config.txt', 'w') as f1:  # use wb mode so if file does not exist, it will create one
+        #         f1.close()
+        #
+        # if exists('config2.txt'):  # Returns True if file exists
+        #     with open('config2.txt', 'r') as f2:  # use wb mode so if file does not exist, it will create one
+        #         self.stockAndUnitValueDict = f2.readlines()
+        #         f2.close()
+        # else:
+        #     with open('config2.txt', 'w') as f2:  # use wb mode so if file does not exist, it will create one
+        #         f2.close()
+
+
+
+        if exists('config.txt'):  # Returns True if file exists
+            with open('config.txt', 'rb') as f: # use wb mode so if file does not exist, it will create one
+=======
         # if os.path.exists(config.txt):  # Returns True if file exists
 
 
         with open('config.txt', 'wb') as f: # use wb mode so if file does not exist, it will create one, however it also will write over any data in the file
             try:
+>>>>>>> origin/main
                 self.speedometerDict=p.load(f)
-            except:
-                self.speedometerDict={}
-            print('The speedometer dictionary has been loaded from the config file', self.speedometerDict.items())
+                f.close()
+                print('The speedometer dictionary has been loaded from the config file', self.speedometerDict.items())
+        else:
+            with open('config.txt','wb') as f:
+                f.close()
 
-        with open('config2.txt', 'wb') as f2:
-            try:
+        if exists('config2.txt'):  # Returns True if file exists
+            with open('config2.txt', 'rb') as f2:
                 self.stockAndUnitValueDict=p.load(f2)
-            except:
-                self.stockAndUnitValueDict={}
-            print('The Stock dictionary has been loaded from the config2 file',self.stockAndUnitValueDict.items())
+                f2.close()
+                print('The Stock dictionary has been loaded from the config2 file',self.stockAndUnitValueDict.items())
+        else:
+            with open('config2.txt','wb') as f2:
+                f2.close()
 
 
     def clearSpeedoFrame(self):
@@ -450,13 +477,27 @@ class MainWindow:
 
 
     def updateConfigFile(self):  # See loadSpeedomterDict for other side of process
+
         """
         This method writes the speedometerDict into the config.txt file
         """
+        #
+        # with open('config.txt', 'w') as f1:
+        #     self.speedometerDict=f1.writelines()
+        #     f1.close()
+        # with open('config2.txt', 'w') as f2:
+        #     self.speedometerDict=f2.writelines()
+        #     f2.close()
+
+        # original approach using pickle
+
         with open('config.txt', 'wb') as f:
             p.dump(self.speedometerDict, f)
+            print('updating config file')
+            f.close()
         with open('config2.txt', 'wb') as f2:
             p.dump(self.stockAndUnitValueDict, f2)
+            f2.close()
 
     def calcCircleOrigin(self, x1, y1, x2, y2):
         """
