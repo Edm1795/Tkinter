@@ -12,6 +12,7 @@ from os.path import exists
 # alt 7 --> structure of code
 # See all latest changes, right click, local history --> show history ( near bottom of menu)
 # ctrl + Shift + E = recently changed code
+#
 
 ########## Commit ##############
 # select commit at top right (green arrow)
