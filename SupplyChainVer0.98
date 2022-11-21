@@ -12,7 +12,6 @@ from os.path import exists
 # alt 7 --> structure of code
 # See all latest changes, right click, local history --> show history ( near bottom of menu)
 # ctrl + Shift + E = recently changed code
-#
 
 ########## Commit ##############
 # select commit at top right (green arrow)
@@ -159,6 +158,7 @@ from os.path import exists
 ##### The problem was that the updateConfigFile() was being run before the dict itself was being updated thus the config file was receiving an empty dict.
 ##### This was resolved by moving the updateConfigFile() to the addMaxStockValue (line 293).
 # 35. Next Item: Add config update to each individual 'edit' button which edits the stock quantity.
+##### Added self.updateConfigFile() to updateQuantityInSpeedometerDict()
 
 
 class MainWindow:
@@ -359,6 +359,7 @@ class MainWindow:
             print('New Set of Values:  ', self.speedometerDict.items())
             # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
+            self.updateConfigFile()  # update the config file to permanetely save stock changes
     # def clear_text():
     #     text.delete(0, END)
 
