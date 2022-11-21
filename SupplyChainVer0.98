@@ -4,6 +4,8 @@ import math
 import numpy
 import pickle as p
 from os.path import exists
+from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
+
 
 # import time
 ############## Helpful for Navigating ##############
@@ -195,6 +197,7 @@ class MainWindow:
 
         frameWidth = 10  # Units are in characters not pixels
 
+        windll.shcore.SetProcessDpiAwareness(1) # used for fixing blurry fonts on win 10 and 11
         #  Instantiate lists for canvases and labels
         self.canvases = []
         self.labels = []
