@@ -22,6 +22,13 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # press commit and push
 # press push
 
+############# Adding New Functions as Buttons to INterface #############
+
+### Example adding a button which takes an argument
+#deleteItemButton = Button(top, command=lambda: self.deleteItem(itemName), text="Delete Item", width=12)
+# Remember to also grid button
+
+
 ############## Key Values for Program ##############
 
 ############## Label's showing name of items ##############
@@ -168,7 +175,7 @@ class MainWindow:
 
         # Master Window
         self.master = master
-        self.master.title('Supply Chain Ver. 0.96 Near to Release')
+        self.master.title('Supply Chain Ver. 0.98 Near to Release')
         self.master.geometry("+150+500")  # position of the window in the screen (200x300)
         self.master.geometry("1000x400")  # set initial size of the root window (master) (1500x700);
         # if not set, the frames will fill the master window
@@ -261,7 +268,7 @@ class MainWindow:
         top.title("Add New Item")
 
         # input for new item in stock
-        addItemLabel = Label(top, text="Add New Item", font=('Cambria 12'))  #  Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+        addItemLabel = Label(top, text="Add New Item", font=('Cambria 14'))  #  Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
         addItemLabel.grid(row=1, column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
 
         addItemEntry = Entry(top, width='40')
@@ -270,7 +277,7 @@ class MainWindow:
         # addItemEntry.bind('<Return>', lambda event: addItemToSpeedometerDict()) #### TURNED Off for a test, turns out this is not needed.
 
         # input for setting max stock level for new item
-        setMaxStockLabel = Label(top, text="Value for Max Stock", font=('Cambria 12'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+        setMaxStockLabel = Label(top, text="Value for Max Stock", font=('Cambria 14'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
         setMaxStockLabel.grid(row=2,column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
 
         setMaxStockEntry = Entry(top, width='40')
@@ -283,7 +290,7 @@ class MainWindow:
             self.updateSpeedometerDict(addItemEntry.get())  # enter text from popup window to be used for name of item being added
             # self.updateConfigFile()  # (This line moved as originally it was too early in the update process) update the config file with the new item so that it is saved for the next time opening the program
 
-            completionMes = Label(top, text=addItemEntry.get() + ' added to your list of items', font=('Cambria 12'))
+            completionMes = Label(top, text=addItemEntry.get() + ' added to your list of items', font=('Cambria 14'))
             completionMes.grid(row=3, column=1)
 
             # addItemEntry.delete(0, END)  # Delete text in entry field. (Note, This deletes the value inside the Entry itself not merely clearing the screen.)
@@ -297,7 +304,7 @@ class MainWindow:
             self.updateStockAndUnitValueDict(int(setMaxStockEntry.get()),addItemEntry.get())
             self.updateConfigFile()  # Update config file (moved from above so that dict is updated first, then conifg file is updated
 
-            completionMes = Label(top, text=setMaxStockEntry.get() + ' set as max stock', font=('Cambria 12'))
+            completionMes = Label(top, text=setMaxStockEntry.get() + ' set as max stock', font=('Cambria 14'))
             completionMes.grid(row=4, column=1)
 
             setMaxStockEntry.delete(0, END)  # Delete text in entry field
@@ -333,12 +340,17 @@ class MainWindow:
         top.title("Edit Quantity of Stock")
 
         editItemLabelTitle = Label(top, text=itemName, font=('Cambria 14'))
-        editItemLabel = Label(top, text="New Value", font=('Cambria 12'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+        editItemLabel = Label(top, text="New Value", font=('Cambria 14'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
 
         editItemLabelTitle.grid(row=1,column=1)
         editItemLabel.grid(row=2,column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
 
         editItemEntry = Entry(top, width='10')
+
+        deleteItemButton = Button(top, command=lambda:self.deleteItem(itemName), text="Delete Item", width= 12)
+
+        deleteItemButton.grid(row=3,column=1)
+
 
         editItemEntry.grid(row=2, column=2)
         editItemEntry.bind('<Return>', lambda event: updateQuantityInSpeedometerDict(itemName)) # send the itemName to the updateQuantity function
@@ -354,7 +366,7 @@ class MainWindow:
             #self.speedometerDict[nameOfStock][2]=int(editItemEntry.get())  # update value in speedometerdict to value given in popup window
             self.stockAndUnitValueDict[nameOfStock][0]=int(editItemEntry.get())  # update stock and unit dict ([0]) with amount of stock spedified by user
 
-            completionMes = Label(top, text=nameOfStock + ' updated to ' + editItemEntry.get(), font=('Cambria 12'))
+            completionMes = Label(top, text=nameOfStock + ' updated to ' + editItemEntry.get(), font=('Cambria 14'))
             completionMes.grid(row=3, column=1)
 
             editItemEntry.delete(0,END)  # Delete text in entry field
@@ -384,6 +396,9 @@ class MainWindow:
             self.speedometerDict.update({newItemName: [[2, lastValue[0][1] + 2], [2, lastValue[1][1] + 2],578]})
             print(self.speedometerDict.items())
 
+
+    def deleteItem(self,itemName):
+        print(itemName)
 
     def loadSpeedometerDict(self): # see updateConfigFile() for saving of files
 
