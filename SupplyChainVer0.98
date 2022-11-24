@@ -168,6 +168,7 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 ##### This was resolved by moving the updateConfigFile() to the addMaxStockValue (line 293).
 # 35. Next Item: Add config update to each individual 'edit' button which edits the stock quantity.
 ##### Added self.updateConfigFile() to updateQuantityInSpeedometerDict()
+# 36. deleting function added to edit button for each speedometer
 
 
 class MainWindow:
@@ -398,7 +399,10 @@ class MainWindow:
 
 
     def deleteItem(self,itemName):
-        print(itemName)
+        del self.speedometerDict[itemName]
+        del self.stockAndUnitValueDict[itemName]
+        self.updateConfigFile()
+        print('values deleted')
 
     def loadSpeedometerDict(self): # see updateConfigFile() for saving of files
 
@@ -509,7 +513,7 @@ class MainWindow:
 
         # original approach using pickle
 
-        with open('config.txt', 'wb') as f:
+        with open('config.txt', 'wb') as f: # Open in wb mode which deletes all contents previously saved and will write new contents
             p.dump(self.speedometerDict, f)
             print('updating config file',self.speedometerDict.items())
             f.close()
@@ -632,7 +636,7 @@ class MainWindow:
             x = XcircleOrigin - (radius * (math.cos(numpy.round(numpy.deg2rad(deg),2))))  # calc coordinate of x on circle's circum. xCoordOfOrigin - (rad. * cos(deg))
             y = YCircleOrigin - (radius * (math.sin(numpy.round(numpy.deg2rad(deg),2))))  # calc y Coord on circle's circum. yCoordOfOrigin - (rad. * sin(deg)
             list1.append((numpy.round(x,2),numpy.round(y,2)))  # [(x,y),(x,y),(x,y)...
-        print('this is list1',list1)
+        # print('this is list1',list1)
 
         for i in range(0, len(list1),1):  # move in steps of two, 0,2,4,6
 
