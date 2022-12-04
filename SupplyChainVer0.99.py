@@ -274,7 +274,7 @@ class MainWindow:
         top.title("Add New Item")
 
         # input for new item in stock
-        addItemLabel = Label(top, text="Add New Item", font=('Cambria 14'))  #  Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+        addItemLabel = Label(top, text="New Item Name", font=('Cambria 14'))  #  Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
         addItemLabel.grid(row=1, column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
 
         addItemEntry = Entry(top, width='40')
@@ -283,7 +283,7 @@ class MainWindow:
         # addItemEntry.bind('<Return>', lambda event: addItemToSpeedometerDict()) #### TURNED Off for a test, turns out this is not needed.
 
         # input for setting max stock level for new item
-        setMaxStockLabel = Label(top, text="Value for Max Stock", font=('Cambria 14'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+        setMaxStockLabel = Label(top, text="Value of Max Stock", font=('Cambria 14'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
         setMaxStockLabel.grid(row=2,column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
 
         setMaxStockEntry = Entry(top, width='20')
@@ -294,8 +294,8 @@ class MainWindow:
         def addItemToSpeedometerDict():
 
             try:
-                
-                assert (str.isdigit(setMaxStockEntry.get())), "Please input digits only." # Assert requires integers from user in order to continue on 
+
+                assert (str.isdigit(setMaxStockEntry.get())), "Please input digits only." # Assert requires integers from user in order to continue on
 
                 self.updateSpeedometerDict(addItemEntry.get())  # enter text from popup window to be used for name of item being added
                 # self.updateConfigFile()  # (This line moved as originally it was too early in the update process) update the config file with the new item so that it is saved for the next time opening the program
