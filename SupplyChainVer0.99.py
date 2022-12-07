@@ -74,6 +74,7 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # editItemLabelTitle = Label(top, text=itemName + '     ' + '(Max Stock = ' + str(self.stockAndUnitValueDict[itemName][0]) + ')', font=('Cambria 14'))
 # calcSpeed() now calcs the speed by index 2 [2] the proper spot for current stock:
 # speedOfItem = (self.stockAndUnitValueDict[k][2] * self.stockAndUnitValueDict[k][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
+# 39. improved editItem display of full stock and current stock
 
 class MainWindow:
     def __init__(self, master):
@@ -159,6 +160,7 @@ class MainWindow:
         self.loadSpeedometerDict()  # Load up all items from speedometerDict from config file and config2
 
     def calcSpeed(self,k):  # stockAndUnitValueDict {key:[max,unit speed,current quantity]}
+        print('stock dictionary',self.stockAndUnitValueDict.items())
         speedOfItem = (self.stockAndUnitValueDict[k][2] * self.stockAndUnitValueDict[k][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
         self.speedometerDict[k][2]=round(speedOfItem) # Round value of stock to whole number then insert into dictionary
         # add loop to check every k,v, if k == itemName: v = speedOfItem
@@ -241,7 +243,7 @@ class MainWindow:
         :param maxStock: int for what constitute full stock of that item
         :param nameOfItem:  Str: name of item in stock
         '''
-        self.stockAndUnitValueDict.update({nameOfItem: [0,0,0]}) # instantiate item in dictionary with placeholder values of 0,0,0 [max stock value,unit of stock value,current quantity of stock]
+        self.stockAndUnitValueDict.update({nameOfItem: [0,0,0]}) # [max stock value,unit of stock value,current quantity of stock] instantiate item in dictionary with placeholder values of 0,0,0 [max stock value,unit of stock value,current quantity of stock]
         self.stockAndUnitValueDict[nameOfItem][0] = maxStock
         self.stockAndUnitValueDict[nameOfItem][1] = 258/maxStock  # 258 is the total range of speed
 
@@ -258,11 +260,15 @@ class MainWindow:
         top.geometry("400x150")
         top.title("Edit Quantity of Stock")
 
-        editItemLabelTitle = Label(top, text=itemName + '     ' + '(Full Stock = ' + str(self.stockAndUnitValueDict[itemName][0]) + ')', font=('Cambria 14'))
+        editItemLabelCurrStock = Label(top, text='Current Stock = ' + str(self.stockAndUnitValueDict[itemName][2]), font=('Cambria 12'))
+        editItemLabelFuStock = Label(top, text='(Full Stock = ' + str(self.stockAndUnitValueDict[itemName][0]) + ')', font=('Cambria 12')) # Label displaying value for full stock
+        editItemLabelTitle = Label(top, text=itemName, font=('Cambria 14'))
         # editItemLabelTitle = Label(top, text=itemName, font=('Cambria 14'))
         editItemLabel = Label(top, text="New Value", font=('Cambria 14'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
 
+        editItemLabelCurrStock.grid(row=1,column=2)
         editItemLabelTitle.grid(row=1,column=1)
+        editItemLabelFuStock.grid(row=1,column=3)
         # editItemLabel.grid_rowconfigure(1, weight=1)
         # editItemLabelTitle.place(x=0.5,y=0.5,anchor='center')
         editItemLabel.grid(row=2,column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
@@ -285,7 +291,7 @@ class MainWindow:
             """
             print(nameOfStock)
             print('Initial Set of Values:', self.speedometerDict.items())
-
+            print('Initial Set of Values stockAndUnit...:  ', self.stockAndUnitValueDict.items())
             #self.speedometerDict[nameOfStock][2]=int(editItemEntry.get())  # update value in speedometerdict to value given in popup window
             self.stockAndUnitValueDict[nameOfStock][2]=int(editItemEntry.get())  # (Note: this update should be done with the updateStock... function and not directly.) update stock and unit dict ([0]) with amount of stock spedified by user
 
