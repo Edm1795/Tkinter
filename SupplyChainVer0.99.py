@@ -75,6 +75,8 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # calcSpeed() now calcs the speed by index 2 [2] the proper spot for current stock:
 # speedOfItem = (self.stockAndUnitValueDict[k][2] * self.stockAndUnitValueDict[k][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
 # 39. improved editItem display of full stock and current stock
+# 40. added assert to editItem():  try:
+#                 assert (str.isdigit(editItemEntry.get())), "Please input digits only."  # Only allow digits from user input, assert evals True continue on, otherwise run except cla.
 
 class MainWindow:
     def __init__(self, master):
@@ -195,8 +197,8 @@ class MainWindow:
         def addItemToSpeedometerDict():
 
             try:
-
-                assert (str.isdigit(setMaxStockEntry.get())), "Please input digits only." # Assert requires integers from user in order to continue on
+                # This assert is actually for the addMaxStockValue() but the assert must be checked before reaching the addMaxStock...()
+                assert (str.isdigit(setMaxStockEntry.get())), "Please input digits only." # Assert requires integers for max stock value from user in order to continue on
 
                 self.updateSpeedometerDict(addItemEntry.get())  # enter text from popup window to be used for name of item being added
                 # self.updateConfigFile()  # (This line moved as originally it was too early in the update process) update the config file with the new item so that it is saved for the next time opening the program
@@ -256,32 +258,32 @@ class MainWindow:
         This function opens a new window for editing the total amount of stock available for the given item clicked on
         Inputs: str: itemName, this is the name of the item in stock associated with that button
         """
+
         top = Toplevel(self.master)
         top.geometry("400x150")
         top.title("Edit Quantity of Stock")
 
+        # Construct Labels
         editItemLabelCurrStock = Label(top, text='Current Stock = ' + str(self.stockAndUnitValueDict[itemName][2]), font=('Cambria 12'))
         editItemLabelFuStock = Label(top, text='(Full Stock = ' + str(self.stockAndUnitValueDict[itemName][0]) + ')', font=('Cambria 12')) # Label displaying value for full stock
         editItemLabelTitle = Label(top, text=itemName, font=('Cambria 14'))
-        # editItemLabelTitle = Label(top, text=itemName, font=('Cambria 14'))
         editItemLabel = Label(top, text="New Value", font=('Cambria 14'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+        # editItemLabelTitle = Label(top, text=itemName, font=('Cambria 14'))
 
+        # Grid Labels
         editItemLabelCurrStock.grid(row=1,column=2)
         editItemLabelTitle.grid(row=1,column=1)
         editItemLabelFuStock.grid(row=1,column=3)
+        editItemLabel.grid(row=2,column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
         # editItemLabel.grid_rowconfigure(1, weight=1)
         # editItemLabelTitle.place(x=0.5,y=0.5,anchor='center')
-        editItemLabel.grid(row=2,column=1)  # Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
-
 
         editItemEntry = Entry(top, width='10')
-
         deleteItemButton = Button(top, command=lambda:self.deleteItem(itemName), text="Delete Item", width= 12)
 
         deleteItemButton.grid(row=3,column=1)
-
-
         editItemEntry.grid(row=2, column=2)
+
         editItemEntry.bind('<Return>', lambda event: updateQuantityInSpeedometerDict(itemName)) # send the itemName to the updateQuantity function
 
         def updateQuantityInSpeedometerDict(nameOfStock):
@@ -293,18 +295,29 @@ class MainWindow:
             print('Initial Set of Values:', self.speedometerDict.items())
             print('Initial Set of Values stockAndUnit...:  ', self.stockAndUnitValueDict.items())
             #self.speedometerDict[nameOfStock][2]=int(editItemEntry.get())  # update value in speedometerdict to value given in popup window
-            self.stockAndUnitValueDict[nameOfStock][2]=int(editItemEntry.get())  # (Note: this update should be done with the updateStock... function and not directly.) update stock and unit dict ([0]) with amount of stock spedified by user
 
-            completionMes = Label(top, text=nameOfStock + ' updated to ' + editItemEntry.get(), font=('Cambria 14'))
-            completionMes.grid(row=3, column=1)
+            try:
+                assert (str.isdigit(editItemEntry.get())), "Please input digits only."  # Only allow digits from user input, assert evals True continue on, otherwise run except cla.
 
-            editItemEntry.delete(0,END)  # Delete text in entry field
+                self.stockAndUnitValueDict[nameOfStock][2]=int(editItemEntry.get())  # (Note: this update should be done with the updateStock... function and not directly.) update stock and unit dict ([0]) with amount of stock spedified by user
 
-            print('New Set of Values:  ', self.speedometerDict.items())
-            print('New Set of Values:  ', self.stockAndUnitValueDict.items())
-            # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
+                completionMes = Label(top, text=nameOfStock + ' updated to ' + editItemEntry.get(), font=('Cambria 14'))
+                completionMes.grid(row=3, column=1)
 
-            self.updateConfigFile()  # update the config file to permanetely save stock changes
+                editItemEntry.delete(0,END)  # Delete text in entry field
+
+                print('New Set of Values:  ', self.speedometerDict.items())
+                print('New Set of Values:  ', self.stockAndUnitValueDict.items())
+                # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
+
+                self.updateConfigFile()  # update the config file to permanetely save stock changes
+
+            except AssertionError as i:  # THis loop will have to include the combine Function or the addItem function.
+
+                print('exception reached', i)
+
+                completionMes = Label(top, text=i.args[0], font=('Cambria 14'))
+                completionMes.grid(row=4, column=1)
     # def clear_text():
     #     text.delete(0, END)
 
