@@ -172,7 +172,7 @@ class MainWindow:
         This function opens up a popup window, takes text from the user and adds that text as an item to the Speedometer Dictionary;
         it also updates the config file so that the item is permanently saved
         """
-        top = Toplevel(self.master)  # add bg="#373738" for colour
+        top = Toplevel(self.master)  # add bg="#373738" for colour.  Appears that the root (self.master) is not needed to run this window
         top.geometry("400x150")
         top.title("Add New Item")
 
@@ -626,7 +626,7 @@ main()
 # 3.  Added list into speedometerDict which calls the updateSpeedometer method
 
 # Version 0.3
-# 4.  Adds pickle function to update config file
+# 4.  Adds pickle functi on to update config file
 # 5.  Adds pickle function to load config file into speedometerDict
 # 6. Improves addItem to receive name of item from user, update config file, and reload the screen to show new item
 # 7. Sets w width to the Label widgets of 8 characters, this standardizes the size of all labels. Will need to create a new function to add new
