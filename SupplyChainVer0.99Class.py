@@ -83,6 +83,8 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # Ver 0.99Class
 # 41. Added Item class
 # 42. Moved non interface functions out to global space
+# 43. fixed the loadSpeedometerDict so that it loads previously saved files into the program Globalized the speedometerDict and the StockAndUnitValue...
+
 
 
 
@@ -145,7 +147,8 @@ class MainWindow:
         # list of all speedometer's and item names. eg: {'Blue Pens':[[1,1],[1,2],501],'Staedtler Pens':[[1,3],[1,4],411], Structure: {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...],Quantity of Item]}
         self.speedometerDict = {}
         self.stockAndUnitValueDict ={} # dictionary with key and list with 3 values (note: originally only had 2 values) [number of items constituting max stock, unit of speed for each item, current quantity of stock] Eg: 3 items = max stock, each item takes 86 km/h of speed, current number of items
-
+        print('this is self',self.speedometerDict.items())
+        print('this is list',*speedometerDict)
         self.circProp = (20,20,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
         self.circleOrigin = self.calcCircleOrigin(self.circProp[0],self.circProp[1],self.circProp[2],self.circProp[3])  # Returns a list of speedometer's values used for drawing line: [xOrigin, yOrigin, radius, width]
 
@@ -173,6 +176,9 @@ class MainWindow:
         # sb.config(command=self.text1.yview)
 
         loadSpeedometerDict()  # Load up all items from speedometerDict from config file and config2
+
+        print('this is self after load', self.speedometerDict.items())
+        print('this is list after loadfunc', *speedometerDict)
 
     def calcSpeed(self,k):  # stockAndUnitValueDict {key:[max,unit speed,current quantity]}
         print('stock dictionary',stockAndUnitValueDict.items())
@@ -297,7 +303,8 @@ class MainWindow:
         listIndexCounter=0  # used for index access to list of canvases, starting with first canvas, drawing each line, then next canvas
 
         # self.clearFrame()
-
+        print('this is still self', self.speedometerDict)
+        print('this is still list', *speedometerDict)
         #  Call drawCircle() for each k,v in speedometerDict.  Creates canvas object, label object, grids them to the screen according to list of lists [[1,1],[1,2]]
         for stockItem in speedometerDict:  # {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...]]}
             if col < maxNumOfBoxes:  # Below the maximum of allowed boxes
@@ -476,7 +483,8 @@ class MainWindow:
         # print(dir(self.frame1))
 
 def loadSpeedometerDict(): # see updateConfigFile() for saving of files
-
+    global speedometerDict
+    global stockAndUnitValueDict
     """
     This method uses pickle to load the dictionaries from config.txt and config2.txt into the speedometerDict and stockAndunitValueDict
     """
@@ -514,7 +522,9 @@ def loadSpeedometerDict(): # see updateConfigFile() for saving of files
     else:
         with open('config2.txt','wb') as f2:
             f2.close()
-
+    # speedometerDict = stockAndUnitValueDict
+    print('this is list below and inside load', *speedometerDict)
+    # return speedometerDict, stockAndUnitValueDict
 
 def addItem():
     """
