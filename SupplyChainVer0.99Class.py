@@ -83,15 +83,15 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # Ver 0.99Class
 # 41. Added Item class
 # 42. Moved non interface functions out to global space
-# 43. fixed the loadSpeedometerDict so that it loads previously saved files into the program Globalized the speedometerDict and the StockAndUnitValue...
+# 43. Renamed all functional uses of speedometerDict to speedometerList
 
 
 
 
 
-speedometerDict = []
+speedometerList = []  # List holding all instantiated classes of class Item (items of stock)
 
-stockAndUnitValueDict = {}
+stockAndUnitValueDict = {}  #  Dictionary holding certain key values
 
 class MainWindow:
     def __init__(self, master):
@@ -148,7 +148,7 @@ class MainWindow:
         self.speedometerDict = {}
         self.stockAndUnitValueDict ={} # dictionary with key and list with 3 values (note: originally only had 2 values) [number of items constituting max stock, unit of speed for each item, current quantity of stock] Eg: 3 items = max stock, each item takes 86 km/h of speed, current number of items
         print('this is self',self.speedometerDict.items())
-        print('this is list',*speedometerDict)
+        print('this is list',*speedometerList)
         self.circProp = (20,20,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
         self.circleOrigin = self.calcCircleOrigin(self.circProp[0],self.circProp[1],self.circProp[2],self.circProp[3])  # Returns a list of speedometer's values used for drawing line: [xOrigin, yOrigin, radius, width]
 
@@ -178,12 +178,12 @@ class MainWindow:
         loadSpeedometerDict()  # Load up all items from speedometerDict from config file and config2
 
         print('this is self after load', self.speedometerDict.items())
-        print('this is list after loadfunc', *speedometerDict)
+        print('this is list after loadfunc', *speedometerList)
 
     def calcSpeed(self,k):  # stockAndUnitValueDict {key:[max,unit speed,current quantity]}
         print('stock dictionary',stockAndUnitValueDict.items())
         speedOfItem = (stockAndUnitValueDict[k][2] * stockAndUnitValueDict[k][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
-        for item in speedometerDict:
+        for item in speedometerList:
             if k == item.getName():
                 item.setSpeed(round(speedOfItem))
                 return
@@ -228,7 +228,7 @@ class MainWindow:
 
         def updateQuantityInSpeedometerDict(nameOfStock):
             """
-            Searches for the correct item in the SpeedometerDict then updates the amount of stock.
+            Searches for the correct item in the speedometerList then updates the amount of stock.
             Inputs: str: nameOfStock, which gives the name of the item in the dict to be updated, {'Blue Pens': [[1,1],[1,2],101]} the third value is accessed ie. 101.
             """
             print(nameOfStock)
@@ -246,7 +246,7 @@ class MainWindow:
 
                 editItemEntry.delete(0,END)  # Delete text in entry field
 
-                print('New Set of Values:  ', *speedometerDict)
+                print('New Set of Values:  ', *speedometerList)
                 print('New Set of Values:  ', stockAndUnitValueDict.items())
                 # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
@@ -285,7 +285,7 @@ class MainWindow:
     def drawCircles(self):
         """
         This method draws all speedometers and speeds. First it draws the speedometers
-        sequentially in the order of the speedometerDict, then it draws in the dial showing
+        sequentially in the order of the speedometerList, then it draws in the dial showing
         the speed of each item.
         """
 
@@ -304,9 +304,9 @@ class MainWindow:
 
         # self.clearFrame()
         print('this is still self', self.speedometerDict)
-        print('this is still list', *speedometerDict)
+        print('this is still list', *speedometerList)
         #  Call drawCircle() for each k,v in speedometerDict.  Creates canvas object, label object, grids them to the screen according to list of lists [[1,1],[1,2]]
-        for stockItem in speedometerDict:  # {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...]]}
+        for stockItem in speedometerList:  # {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...]]}
             if col < maxNumOfBoxes:  # Below the maximum of allowed boxes
                 self.drawCircle(stockItem.getName(), [row, col], [row,col + 1])  # {'Blue Pens':[[1,1],[1,2],501],...} Note, only sends first two lists, not the final value 501.  Eg: [0,0],[0,1]... [0,2],[0,3]...[0,4],[0,5]
                 col += 2  # Increment by 2 so as not to overlap with previous boxes  [0,0],[0,1]... [0,2],[0,3]...[0,4],[0,5]
@@ -316,9 +316,9 @@ class MainWindow:
                 self.drawCircle(stockItem.getName(), [row, col], [row,col + 1])  # {'Blue Pens':[[1,1],[1,2],501],...} Note, only sends first two lists, not the final value 501
                 col += 2  # Increment by 2 so as not to overlap with previous boxes in the row [0,0],[0,1]... [0,2],[0,3]...[0,4],[0,5]
 
-            self.calcSpeed(stockItem.getName())  # calculates the proper speed for each item and updates the speedometerDict with those proper speeds
+            self.calcSpeed(stockItem.getName())  # calculates the proper speed for each item and updates the speedometerList with those proper speeds
 
-        for item in speedometerDict:
+        for item in speedometerList:
             self.updateSpeedometer(item.getSpeed(), self.circleOrigin[0], self.circleOrigin[1], self.circleOrigin[2],listIndexCounter)
             listIndexCounter += 1
 
@@ -483,10 +483,10 @@ class MainWindow:
         # print(dir(self.frame1))
 
 def loadSpeedometerDict(): # see updateConfigFile() for saving of files
-    global speedometerDict
+    global speedometerList  # make this list global so this function can access the list for updating
     global stockAndUnitValueDict
     """
-    This method uses pickle to load the dictionaries from config.txt and config2.txt into the speedometerDict and stockAndunitValueDict
+    This method uses pickle to load the dictionaries from config.txt and config2.txt into the speedometerList and stockAndunitValueDict
     """
 
     # if exists('config.txt'):  # Returns True if file exists
@@ -507,9 +507,9 @@ def loadSpeedometerDict(): # see updateConfigFile() for saving of files
 
     if exists('config.txt'):  # Returns True if file exists
         with open('config.txt', 'rb') as f: # use wb mode so if file does not exist, it will create one
-            speedometerDict=p.load(f)
+            speedometerList=p.load(f)
             f.close()
-            print('The speedometer dictionary has been loaded from the config file', *speedometerDict)
+            print('The speedometer dictionary has been loaded from the config file', *speedometerList)
     else:
         with open('config.txt','wb') as f:
             f.close()
@@ -523,7 +523,7 @@ def loadSpeedometerDict(): # see updateConfigFile() for saving of files
         with open('config2.txt','wb') as f2:
             f2.close()
     # speedometerDict = stockAndUnitValueDict
-    print('this is list below and inside load', *speedometerDict)
+    print('this is list below and inside load', *speedometerList)
     # return speedometerDict, stockAndUnitValueDict
 
 def addItem():
@@ -607,21 +607,21 @@ def updateSpeedometerDict(newItemName):
       """
 
     # If the item being added is the very first to the dictionary, place item in first spot on interface grid. Max stock == 578
-    if len(speedometerDict)==0:
+    if len(speedometerList)==0:
         stockItem = Item(newItemName,10,578,10,'today',[1,0],[1,1])  # instantiate individual item
-        speedometerDict.append(stockItem)
+        speedometerList.append(stockItem)
             # ({newItemName: [[1, 0], [1, 1],578]})
     else: # If item is not the first, place it after the last item
         # get last value from dict (list of lists: :[label(row,col):[2,5],circle(row,col):[2,6]],quantity:583]) from dict. [[1, 13], [1, 14], 401])
-        lastItem = speedometerDict[-1]  # get last item of stock from the list of items (this is a class object)
+        lastItem = speedometerList[-1]  # get last item of stock from the list of items (this is a class object)
         labRowCol = lastItem.getLabRowCol()  # get the labRowCol attribute, [x,y]
         cirRowCol = lastItem.getCirRowCol()
         print(cirRowCol)
         # lastValue = list(self.speedometerDict.items())[-1]
         # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
         stockItem = Item(newItemName, 10, 578, 10, 'today', [2, labRowCol[1] + 2], [2, cirRowCol[1] + 2])  # instantiate individual item
-        speedometerDict.append(stockItem)
-        print(*speedometerDict)
+        speedometerList.append(stockItem)
+        print(*speedometerList)
 
 def updateStockAndUnitValueDict(maxStock,nameOfItem): # put max stock value into StockAndUnitValueDict
     '''
@@ -638,7 +638,7 @@ def updateStockAndUnitValueDict(maxStock,nameOfItem): # put max stock value into
 def updateConfigFile():  # See loadSpeedomterDict for other side of process
 
     """
-    This method writes the speedometerDict into the config.txt file
+    This method writes the speedometerList into the config.txt file
     """
     #
     # with open('config.txt', 'w') as f1:
@@ -651,8 +651,8 @@ def updateConfigFile():  # See loadSpeedomterDict for other side of process
     # original approach using pickle
 
     with open('config.txt', 'wb') as f: # Open in wb mode which deletes all contents previously saved and will write new contents
-        p.dump(speedometerDict, f)
-        print('updating config file', *speedometerDict)
+        p.dump(speedometerList, f)
+        print('updating config file', *speedometerList)
         f.close()
     with open('config2.txt', 'wb') as f2:
         p.dump(stockAndUnitValueDict, f2)
