@@ -84,7 +84,7 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # 41. Added Item class
 # 42. Moved non interface functions out to global space
 # 43. Renamed all functional uses of speedometerDict to speedometerList
-
+# 44. Code re-arrangement, Moved class Item to sit just under class MainWindow in the code
 
 
 
@@ -481,6 +481,52 @@ class MainWindow:
         print(btn.configure().keys())
         print(self.frame1.configure().keys())
         # print(dir(self.frame1))
+
+class Item:
+
+    def __init__(self,itemName,quantity,speed,fullStock,lastDateOfUpdate,labRowCol,cirRowCol):
+        self.itemName = itemName
+        self.quantity = quantity
+        self.speed = speed
+        self.fullStock = fullStock
+        self.lastDateOfUpdate = lastDateOfUpdate
+        self.labRowCol = labRowCol
+        self.cirRowCol = cirRowCol
+
+    def updateQuantity(self,quantity,lastDateOfUpdate):
+        self.quantity = quantity
+        self.lastDateOfUpdate = lastDateOfUpdate
+
+    def getSpeed(self):
+        return self.speed
+
+    def setSpeed(self,speed):
+        self.speed = speed
+
+    def getFullStock(self):
+        return self.fullStock
+
+    def getLastDateOfUpdate(self):
+        return self.lastDateOfUpdate
+
+    def getQuantity(self):
+        return self.quantity
+
+    def getName(self):
+        return self.itemName
+
+    def setLabRowCol(self,labRowCol):
+        self.labRowCol = labRowCol
+
+    def setCirRowCol(self,cirRowCol):
+        self.cirRowCol = cirRowCol
+
+    def getLabRowCol(self):
+        return self.labRowCol
+
+    def getCirRowCol(self):
+        return self.cirRowCol
+
 
 def loadSpeedometerDict(): # see updateConfigFile() for saving of files
     global speedometerList  # make this list global so this function can access the list for updating
