@@ -85,7 +85,7 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # 42. Moved non interface functions out to global space
 # 43. Renamed all functional uses of speedometerDict to speedometerList
 # 44. Code re-arrangement, Moved class Item to sit just under class MainWindow in the code
-
+# 45. Rebuilt deleteItem() for classes
 
 
 
@@ -263,10 +263,26 @@ class MainWindow:
 
 
     def deleteItem(self,itemName):
-        del self.speedometerDict[itemName]
-        del self.stockAndUnitValueDict[itemName]
-        self.updateConfigFile()
-        print('values deleted')
+        '''
+        This function searches the speedometerList for the item which the user has chosen to delete (from the edit button)
+        and then removes that item from the speedometerList. Note, if there happens to be items with duplicate names, all will
+        be deleted.
+
+        :input: itemName: name of item from class Item which will be deleted
+        :return: None
+        '''
+        c = 0
+        for item in speedometerList:
+            if item.getName() == itemName:
+                del speedometerList[c]
+                del stockAndUnitValueDict[itemName]
+                return
+            else:
+                c+=1
+        # del speedometerList[itemName]
+        # del stockAndUnitValueDict[itemName]
+        # updateConfigFile()
+        # print('values deleted')
 
 
 
