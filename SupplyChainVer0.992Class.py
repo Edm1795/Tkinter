@@ -93,6 +93,7 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 
 # Ver 0.992
 # 49. moved editItem and deleteItem to global space
+# 50. added rename function and rename method to class Item
 
 
 speedometerList = []  # List holding all instantiated classes of class Item (items of stock)
@@ -444,6 +445,9 @@ class Item:
     def getName(self):
         return self.itemName
 
+    def rename(self, newName):
+        self.itemName = newName
+
     def setLabRowCol(self,labRowCol):
         self.labRowCol = labRowCol
 
@@ -601,11 +605,13 @@ def editItem(itemName):
     # editItemLabelTitle.place(x=0.5,y=0.5,anchor='center')
 
     editItemEntry = Entry(top, width='10')
+
     deleteItemButton = Button(top, command=lambda:deleteItem(itemName), text="Delete Item", width= 12)
+    renameItemButton = Button(top, command=lambda:renameItem(itemName), text="Rename Item", width= 12)
 
     editItemEntry.grid(row=4, column=2)  # Entry box
     deleteItemButton.grid(row=5,column=1)  # Delete button
-
+    renameItemButton.grid(row=6,column=1)  # Rename button
 
     editItemEntry.bind('<Return>', lambda event: updateQuantityInSpeedometerDict(itemName)) # send the itemName to the updateQuantity function
 
@@ -666,6 +672,41 @@ def deleteItem(itemName):
     # del stockAndUnitValueDict[itemName]
     # updateConfigFile()
     # print('values deleted')
+
+def renameItem(itemName):
+    '''
+    This function renames items of stock by accessing the item in the speedometerList
+    and renames using the .rename() method, then it searches the stockAndUnitValueDict
+    and renames the key
+
+    :input: itemName: name of item from class Item which will be deleted
+    :return: None
+    '''
+
+    top = Toplevel()  # top = Toplevel(self.master)
+    top.geometry("500x180")
+    top.title("Edit Quantity of Stock")
+
+    # Construct Labels
+    editItemLabel = Label(top, text="New Value", font=('Cambria 14'))  # Label(top, text="Add New Item", font=('Mistral 18 bold')).place(x=150, y=80)
+    # editItemLabelTitle = Label(top, text=itemName, font=('Cambria 14'))
+
+    # Grid Labels
+    editItemLabel.grid(row=4,column=1)  # "New Value",   Note: .grid cannot be placed as a single line code: Label(...).grid(..) as the .grid will actually return None to the program and casue an error
+
+    editItemEntry = Entry(top, width='10')
+    editItemEntry.grid(row=4, column=2)
+
+    editItemEntry.bind('<Return>', lambda event: renameItem(itemName))  # s
+
+
+    def renameItem(itemName):
+        for item in speedometerList:
+            if item.getName() == itemName:
+                item.rename(editItemEntry.get())
+                stockAndUnitValueDict[editItemEntry.get()] = stockAndUnitValueDict.pop(itemName)
+                return
+
 
 
 def updateSpeedometerDict(newItemName):
@@ -728,52 +769,6 @@ def updateConfigFile():  # See loadSpeedomterDict for other side of process
         p.dump(stockAndUnitValueDict, f2)
         print('updating config2 file', stockAndUnitValueDict.items())
         f2.close()
-
-
-class Item:
-
-    def __init__(self,itemName,quantity,speed,fullStock,lastDateOfUpdate,labRowCol,cirRowCol):
-        self.itemName = itemName
-        self.quantity = quantity
-        self.speed = speed
-        self.fullStock = fullStock
-        self.lastDateOfUpdate = lastDateOfUpdate
-        self.labRowCol = labRowCol
-        self.cirRowCol = cirRowCol
-
-    def updateQuantity(self,quantity,lastDateOfUpdate):
-        self.quantity = quantity
-        self.lastDateOfUpdate = lastDateOfUpdate
-
-    def getSpeed(self):
-        return self.speed
-
-    def setSpeed(self,speed):
-        self.speed = speed
-
-    def getFullStock(self):
-        return self.fullStock
-
-    def getLastDateOfUpdate(self):
-        return self.lastDateOfUpdate
-
-    def getQuantity(self):
-        return self.quantity
-
-    def getName(self):
-        return self.itemName
-
-    def setLabRowCol(self,labRowCol):
-        self.labRowCol = labRowCol
-
-    def setCirRowCol(self,cirRowCol):
-        self.cirRowCol = cirRowCol
-
-    def getLabRowCol(self):
-        return self.labRowCol
-
-    def getCirRowCol(self):
-        return self.cirRowCol
 
 
 # def instantiateItem(itemName,quantity,speed,fullStock,lastDateOfUpdate):
