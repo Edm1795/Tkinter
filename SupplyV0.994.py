@@ -167,7 +167,7 @@ class MainWindow:
         self.speedometerDict = {}
         self.stockAndUnitValueDict ={} # dictionary with key and list with 3 values (note: originally only had 2 values) [number of items constituting max stock, unit of speed for each item, current quantity of stock] Eg: 3 items = max stock, each item takes 86 km/h of speed, current number of items
         print('this is self',self.speedometerDict.items())
-        print('this is list',*speedometerList)
+        print('this is speedometerList',*speedometerList,'\n')
         self.circProp = (20,20,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
         self.circleOrigin = self.calcCircleOrigin(self.circProp[0],self.circProp[1],self.circProp[2],self.circProp[3])  # Returns a list of speedometer's values used for drawing line: [xOrigin, yOrigin, radius, width]
 
@@ -197,10 +197,10 @@ class MainWindow:
         loadSpeedometerDict()  # Load up all items from speedometerDict from config file and config2
 
         print('this is self after load', self.speedometerDict.items())
-        print('this is list after loadfunc', *speedometerList)
+        print('this is list after loadfunc', *speedometerList,'\n')
 
     def calcSpeed(self,k):  # stockAndUnitValueDict {key:[max,unit speed,current quantity]}
-        print('stock dictionary',stockAndUnitValueDict.items())
+        print('stock and unit value dictionary',stockAndUnitValueDict.items(),'\n')
         speedOfItem = (stockAndUnitValueDict[k][2] * stockAndUnitValueDict[k][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
         for item in speedometerList:
             if k == item.getName():
@@ -242,8 +242,8 @@ class MainWindow:
         listIndexCounter=0  # used for index access to list of canvases, starting with first canvas, drawing each line, then next canvas
 
         # self.clearFrame()
-        print('this is still self', self.speedometerDict)
-        print('this is still list', *speedometerList)
+        # print('this is still self', self.speedometerDict)
+        # print('this is still list', *speedometerList)
         #  Call drawCircle() for each k,v in speedometerDict.  Creates canvas object, label object, grids them to the screen according to list of lists [[1,1],[1,2]]
         for stockItem in speedometerList:  # {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...]]}
             if col < maxNumOfBoxes:  # Below the maximum of allowed boxes
@@ -518,7 +518,7 @@ def loadSpeedometerDict(): # see updateConfigFile() for saving of files
         with open('config.txt', 'rb') as f: # use wb mode so if file does not exist, it will create one
             speedometerList=p.load(f)
             f.close()
-            print('The speedometer dictionary has been loaded from the config file', *speedometerList)
+            print('The speedometer list has been loaded from the config file', *speedometerList)
     else:
         with open('config.txt','wb') as f:
             f.close()
@@ -527,12 +527,12 @@ def loadSpeedometerDict(): # see updateConfigFile() for saving of files
         with open('config2.txt', 'rb') as f2:
             stockAndUnitValueDict=p.load(f2)
             f2.close()
-            print('The Stock dictionary has been loaded from the config2 file', stockAndUnitValueDict.items())
+            print('The Stock and unit value dictionary has been loaded from the config2 file', stockAndUnitValueDict.items(),'\n')
     else:
         with open('config2.txt','wb') as f2:
             f2.close()
     # speedometerDict = stockAndUnitValueDict
-    print('this is list below and inside load', *speedometerList)
+    print('this is list below and inside load', *speedometerList,'\n')
     # return speedometerDict, stockAndUnitValueDict
 
 def addItem():
@@ -607,12 +607,13 @@ def addItem():
         setMaxStockEntry.delete(0, END)  # Delete text in entry field
         addItemEntry.delete(0,END)  # Delete text in entry field. (Note, This deletes the value inside the Entry itself not merely clearing the screen.)
 
-        print(stockAndUnitValueDict.items())
+        # print(stockAndUnitValueDict.items())
 
 
     def combineAddItemAndMaxStock():
         addItemToSpeedometerDict()
         addMaxStockValue()
+
 
 def editItem(itemName):
 
@@ -632,7 +633,7 @@ def editItem(itemName):
     for item in speedometerList:
         if item.getName() == itemName:
             stockType = item.getStockType()
-            print('##########################',item.getStockType())
+            print('#############', 'stock type',item.getStockType(),'\n')
 
     # Construct Labels
     editItemLabelCurrStock = Label(top, text='Current Stock = ' + str(stockAndUnitValueDict[itemName][2]) + ' ' + stockType, font=('Cambria 12'))
@@ -670,7 +671,7 @@ def editItem(itemName):
         """
         print(nameOfStock)
         print('Initial Set of Values:', *speedometerList)
-        print('Initial Set of Values stockAndUnit...:  ', stockAndUnitValueDict.items())
+        print('Initial Set of Values stockAndUnit...:  ', stockAndUnitValueDict.items(),'\n')
         #self.speedometerDict[nameOfStock][2]=int(editItemEntry.get())  # update value in speedometerdict to value given in popup window
 
         try:
@@ -684,7 +685,7 @@ def editItem(itemName):
             editItemEntry.delete(0,END)  # Delete text in entry field
 
             print('New Set of Values:  ', *speedometerList)
-            print('New Set of Values:  ', stockAndUnitValueDict.items())
+            print('New Set of Values:  ', stockAndUnitValueDict.items(),'\n')
             # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
             updateConfigFile()  # update the config file to permanetely save stock changes
@@ -817,7 +818,7 @@ def updateSpeedometerDict(newItemName,stockType):
         # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
         stockItem = Item(newItemName, 10, 578, 10, stockType, 'today', [2, labRowCol[1] + 2], [2, cirRowCol[1] + 2])  # instantiate individual item
         speedometerList.append(stockItem)
-        print(*speedometerList)
+        print(*speedometerList,'\n')
 
 def updateStockAndUnitValueDict(maxStock,nameOfItem): # put max stock value into StockAndUnitValueDict
 
@@ -831,7 +832,7 @@ def updateStockAndUnitValueDict(maxStock,nameOfItem): # put max stock value into
     stockAndUnitValueDict[nameOfItem][0] = maxStock
     stockAndUnitValueDict[nameOfItem][1] = 258/maxStock  # 258 is the total range of speed
 
-    print('stockAndUnitValueDict contents', stockAndUnitValueDict.items())
+    print('stockAndUnitValueDict contents', stockAndUnitValueDict.items(),'\n')
 
 def updateConfigFile():  # See loadSpeedomterDict for other side of process
 
