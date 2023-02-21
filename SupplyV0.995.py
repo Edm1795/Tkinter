@@ -106,7 +106,7 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # 54. Added global mainWin to main(), also ins. the MainWindow into the variable mainWin
 # 55. Added mainWin.drawCircles() to addItem()
 # 56. Added mainWin.drawCircles to editItem()
-
+# 57. Renamed loadSpeedometerDict to ...List  and  updateSpeedometerDict to ...List
 
 speedometerList = []  # List holding all instantiated classes of class Item (items of stock)
 
@@ -199,7 +199,7 @@ class MainWindow:
         # self.text1.config(yscrollcommand=sb.set)
         # sb.config(command=self.text1.yview)
 
-        loadSpeedometerDict()  # Load up all items from speedometerDict from config file and config2
+        loadSpeedometerList()  # Load up all items from speedometerDict from config file and config2
 
         print('this is self after load', self.speedometerDict.items())
         print('this is list after loadfunc', *speedometerList,'\n')
@@ -494,7 +494,7 @@ class Item:
         return self.cirRowCol
 
 
-def loadSpeedometerDict(): # see updateConfigFile() for saving of files
+def loadSpeedometerList(): # see updateConfigFile() for saving of files
 
     """
     This method uses pickle to load the dictionaries from config.txt and config2.txt into the speedometerList and stockAndunitValueDict
@@ -580,7 +580,7 @@ def addItem():
             # This assert is actually for the addMaxStockValue() but the assert must be checked before reaching the addMaxStock...()
             assert (str.isdigit(setMaxStockEntry.get())), "Please input digits only." # Assert requires integers for max stock value from user in order to continue on
 
-            updateSpeedometerDict(addItemEntry.get(),stockTypeEntry.get())  # enter text from popup window to be used for name of item being added
+            updateSpeedometerList(addItemEntry.get(), stockTypeEntry.get())  # enter text from popup window to be used for name of item being added
             # self.updateConfigFile()  # (This line moved as originally it was too early in the update process) update the config file with the new item so that it is saved for the next time opening the program
 
             completionMes = Label(top, text=addItemEntry.get() + ' added to your list of items', font=('Cambria 14'))
@@ -800,7 +800,7 @@ def editFullStock(itemName):
         stockAndUnitValueDict[itemName][1] = 258 / int(maxStock)  # 258 is the total range of speed
 
 
-def updateSpeedometerDict(newItemName,stockType):
+def updateSpeedometerList(newItemName, stockType):
 
     """
       This function adds new items to the Speedometer Dictionary from the add item button on the interface;
