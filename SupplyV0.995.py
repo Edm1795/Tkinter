@@ -105,6 +105,7 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11
 # Ver 0.995
 # 54. Added global mainWin to main(), also ins. the MainWindow into the variable mainWin
 # 55. Added mainWin.drawCircles() to addItem()
+# 56. Added mainWin.drawCircles to editItem()
 
 
 speedometerList = []  # List holding all instantiated classes of class Item (items of stock)
@@ -118,7 +119,7 @@ class MainWindow:
 
         # Master Window
         self.master = master
-        self.master.title('Supply V. 0.995')
+        self.master.title('Supply V. 0.994')
         self.master.geometry("+150+500")  # position of the window in the screen (200x300)
         self.master.geometry("1000x400")  # set initial size of the root window (master) (1500x700);
         # if not set, the frames will fill the master window
@@ -694,7 +695,7 @@ def editItem(itemName):
             # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
             updateConfigFile()  # update the config file to permanetely save stock changes
-
+            mainWin.drawCircles()
         except AssertionError as i:  # THis loop will have to include the combine Function or the addItem function.
 
             print('exception reached', i)
