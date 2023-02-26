@@ -110,10 +110,12 @@ from ctypes import windll  # used for fixing blurry fonts on win 10 and 11 (also
 
 # Ver 0.996
 # 58. changed "Edit" button on each item to a ttk style and added width=4 to kee button compact
+# 59. Changed styling of Edit button
 
 speedometerList = []  # List holding all instantiated classes of class Item (items of stock)
 
-stockAndUnitValueDict = {}  #  Dictionary holding certain key values
+stockAndUnitValueDict = {}  #  Dictionary holding certain key values. key and list with 3 values (note: originally only had 2 values) [number of items constituting max stock, unit of speed for each item, current quantity of stock] Eg: 3 items = max stock, each item takes 86 km/h of speed, current number of items
+
 
 
 class MainWindow:
@@ -356,6 +358,11 @@ class MainWindow:
 
         # create and place edit button for editing values of the stock item
         editButton = ttk.Button(c, text='Edit',width=4,command=lambda:editItem(itemName))      # create button on the canvas. to give an id: name='itemName'. The command runs editItem with the itemName as parameter
+
+        # Adjust style of ttk buttons
+        s = ttk.Style() # Get ttk style class
+        s.configure('TButton',foreground='green')  # access the style class (now as s) then modify the Button style (referred to as TButton)
+
         c.create_window(110, 10, anchor=NW, window=editButton)      # Create a window on the canvas to hold to hold the button (change 1st arg to fit better for ttk)
 
         c.grid(row=cirRowCol[0], column=cirRowCol[1], sticky='nse')
@@ -698,7 +705,8 @@ def editItem(itemName):
             # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
             updateConfigFile()  # update the config file to permanetely save stock changes
-            mainWin.drawCircles()
+            mainWin.drawCircles()  # Refresh all Speds
+
         except AssertionError as i:  # THis loop will have to include the combine Function or the addItem function.
 
             print('exception reached', i)
