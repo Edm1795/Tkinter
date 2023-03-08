@@ -148,6 +148,10 @@ import time
 # Speds now can update to a decrease in quantity
 #    Added clearSped() which uses c.create_oval to write over in white the circle
 #    clearSped() was then added to the editItem() function
+# Added self.getCanvas method, and switched this in for editItem() to clear the sped before drawing
+# Added self.chgCanColour() and addded to editItem to highlight the item being edited
+# comment out all print statements
+
 
 speedometerList = []  # List holding all instantiated classes of class Item (items of stock)
 
@@ -216,8 +220,8 @@ class MainWindow:
         # list of all speedometer's and item names. eg: {'Blue Pens':[[1,1],[1,2],501],'Staedtler Pens':[[1,3],[1,4],411], Structure: {itemNameAsKey: Value as list of lists [[values for drawCircle() label row and col...],[values for updateSpeedometer() circle row and col...],Quantity of Item]}
         self.speedometerDict = {}
         self.stockAndUnitValueDict ={} # dictionary with key and list with 3 values (note: originally only had 2 values) [number of items constituting max stock, unit of speed for each item, current quantity of stock] Eg: 3 items = max stock, each item takes 86 km/h of speed, current number of items
-        print('this is self speedometerDict',self.speedometerDict.items())
-        print('this is speedometerList',*speedometerList,'\n')
+        # print('this is self speedometerDict',self.speedometerDict.items())
+        # print('this is speedometerList',*speedometerList,'\n')
         self.circProp = (20,20,80,80,3)  # Properties needed for drawing circle inside of a box (x,y,x,y,outlineWidth)
         self.circleOrigin = self.calcCircleOrigin(self.circProp[0],self.circProp[1],self.circProp[2],self.circProp[3])  # Returns a list of speedometer's values used for drawing line: [xOrigin, yOrigin, radius, width]
 
@@ -249,11 +253,11 @@ class MainWindow:
 
         loadSpeedometerList()  # Load up all items from speedometerDict from config file and config2
 
-        print('this is self after load', self.speedometerDict.items())
-        print('this is list after loadfunc', *speedometerList,'\n')
+        # print('this is self after load', self.speedometerDict.items())
+        # print('this is list after loadfunc', *speedometerList,'\n')
 
     def calcSpeed(self,k):  # stockAndUnitValueDict {key:[max,unit speed,current quantity]}
-        print('stock and unit value dictionary',stockAndUnitValueDict.items(),'\n')
+        # print('stock and unit value dictionary',stockAndUnitValueDict.items(),'\n')
         speedOfItem = (stockAndUnitValueDict[k][2] * stockAndUnitValueDict[k][1]) + 320  # multiples the number of stock by unit of speed then adds 320 (320 is actually the strating value for no stock or speed of 0 km/h)
         for item in speedometerList:
             if k == item.getName():
@@ -398,7 +402,7 @@ class MainWindow:
 
         c.grid(row=cirRowCol[0], column=cirRowCol[1], sticky='nse')
         self.canvasesDict[itemName]=c  # append the canvas to list
-        print('length of canvas list:',len(self.canvases),end='.')
+        # print('length of canvas list:',len(self.canvases),end='.')
         # self.canvases.append(Canvas(self.frame2, width=canvasWidth, height=cavasHeight, bg='white'))
         self.labels.append(Label(self.frame2, width=self.labelWidth, text=itemNameFormatter(itemName),bg="#121212",fg="white"))
 
@@ -466,7 +470,7 @@ class MainWindow:
 
     def clearSped(self,itemName):
 
-        c=self.canvasesDict[itemName]
+        c=self.getCanvas(itemName)  # access canvas for given item; could also use getCanvas()
         c.create_oval(self.circProp[0], self.circProp[1],self.circProp[2],self.circProp[3],width=self.circProp[4],fill='white')
 
     def getLabelsList(self):
@@ -484,6 +488,22 @@ class MainWindow:
         '''
 
         return self.canvases
+
+    def getCanvas(self,itemName):
+
+        '''
+        Returns the exact canvas of a given item so that changes can be made to the display.
+
+        input: str: itemName:
+        return: canvas object
+        '''
+
+        return self.canvasesDict[itemName]
+
+    def chgCanColour(self,itemName,colour):
+
+        canvas=self.getCanvas(itemName)
+        canvas.configure(bg=colour)
 
     def getCircleValues(self):
 
@@ -631,7 +651,7 @@ def getCanvasGridPosArchived():
     for canvas in canvasList:
         row=canvas.grid_info()['row']
         col=canvas.grid_info()['column']
-        print((row,col))
+        # print((row,col))
 
 
 
@@ -664,7 +684,7 @@ def loadSpeedometerList(): # see updateConfigFile() for saving of files
         with open('config.txt', 'rb') as f: # use wb mode so if file does not exist, it will create one
             speedometerList=p.load(f)
             f.close()
-            print('The speedometer list has been loaded from the config file', *speedometerList)
+            # print('The speedometer list has been loaded from the config file', *speedometerList)
     else:
         with open('config.txt','wb') as f:
             f.close()
@@ -673,12 +693,12 @@ def loadSpeedometerList(): # see updateConfigFile() for saving of files
         with open('config2.txt', 'rb') as f2:
             stockAndUnitValueDict=p.load(f2)
             f2.close()
-            print('The Stock and unit value dictionary has been loaded from the config2 file', stockAndUnitValueDict.items(),'\n')
+            # print('The Stock and unit value dictionary has been loaded from the config2 file', stockAndUnitValueDict.items(),'\n')
     else:
         with open('config2.txt','wb') as f2:
             f2.close()
     # speedometerDict = stockAndUnitValueDict
-    print('this is list below and inside load', *speedometerList,'\n')
+    # print('this is list below and inside load', *speedometerList,'\n')
     # return speedometerDict, stockAndUnitValueDict
 
 def addItem():
@@ -743,7 +763,7 @@ def addItem():
         # self.updateConfigFile()
         # assert (str.isdigit(setMaxStockEntry.get())), "Please input digits only." # moved to earlier function addItemToSpeedometer()
 
-        print('Full stock will be:', setMaxStockEntry.get(), addItemEntry.get())
+        # print('Full stock will be:', setMaxStockEntry.get(), addItemEntry.get())
         # write max stock and set unit value for the given item to the dict.
         updateStockAndUnitValueDict(int(setMaxStockEntry.get()),addItemEntry.get())
         updateConfigFile()  # Update config file (moved from above so that dict is updated first, then conifg file is updated
@@ -788,8 +808,8 @@ def editItem(itemName):
            stockType = item.getStockType()
            found = True
            c=-1
-           print('#############', 'stock type',item.getStockType(),'\n')
-    print('under while loop',item.getName())
+           # print('#############', 'stock type',item.getStockType(),'\n')
+    # print('under while loop',item.getName())
 
 
     # Construct Labels
@@ -818,8 +838,11 @@ def editItem(itemName):
     deleteItemButton.grid(row=5,column=1)  # Delete button
     renameItemButton.grid(row=6,column=1)  # Rename button
     editFullStockButton.grid(row=7,column=1) # Edit Full Stock Button
-    print('near end of edit item',itemName)
+    # print('near end of edit item',itemName)
     # print('canvas pos:',getCanvasGridPos(),end='.')
+
+    # mainWin.chgCanColour(itemName,'#6A838F') # Use this later to highlight item as soon as hitting edit
+
     editItemEntry.bind('<Return>', lambda event: updateQuantityInSpeedometerDict(itemName,item,editItemEntry.get())) # send the itemName to the updateQuantity function
 
     def updateQuantityInSpeedometerDict(nameOfStock,item,quantity):
@@ -827,9 +850,9 @@ def editItem(itemName):
         Searches for the correct item in the speedometerList then updates the amount of stock.
         Inputs: str: nameOfStock, which gives the name of the item in the dict to be updated, {'Blue Pens': [[1,1],[1,2],101]} the third value is accessed ie. 101.
         """
-        print(nameOfStock)
-        print('Initial Set of Values:', *speedometerList)
-        print('Initial Set of Values stockAndUnit...:  ', stockAndUnitValueDict.items(),'\n')
+        # print(nameOfStock)
+        # print('Initial Set of Values:', *speedometerList)
+        # print('Initial Set of Values stockAndUnit...:  ', stockAndUnitValueDict.items(),'\n')
         #self.speedometerDict[nameOfStock][2]=int(editItemEntry.get())  # update value in speedometerdict to value given in popup window
 
         try:
@@ -842,8 +865,8 @@ def editItem(itemName):
 
             editItemEntry.delete(0,END)  # Delete text in entry field
 
-            print('New Set of Values:  ', *speedometerList)
-            print('New Set of Values:  ', stockAndUnitValueDict.items(),'\n')
+            # print('New Set of Values:  ', *speedometerList)
+            # print('New Set of Values:  ', stockAndUnitValueDict.items(),'\n')
             # self.speedometerDict.update({'Blue Pens': [[1,1],[1,2],101]})  # 50 is inside a list of lists, only change the 50 keep other values as is.
 
             updateConfigFile()  # update the config file to permanetely save stock changes
@@ -862,9 +885,13 @@ def editItem(itemName):
             # print('check for object values:',item.getName(),item.getSpeed(),canIndValue,sep='\n')
 
             # Update only the single desired item on the screen
+
+            mainWin.chgCanColour(itemName,'#6A838F')
             mainWin.clearSped(itemName)
+
             mainWin.updateSpeedometer(item.getSpeed(),circVals[0],circVals[1],circVals[2],itemName)
 
+            mainWin.chgCanColour(itemName, 'white')
             logHistory('Edit', 'n/a', quantity, 'n/a', nameOfStock)
 
             top.destroy()
@@ -992,7 +1019,7 @@ def logHistory(action,origVal,newVal,stockType,itemName):
     ct = time.strftime("%H:%M", t)  # Current time as str. orig incl seconds: ("%H:%M:%S", t)
 
     historyList.append(History(ct,action,origVal,newVal,stockType,itemName))
-    print(historyList[0])
+    # print(historyList[0])
 
 def showHistory():
 
@@ -1064,12 +1091,12 @@ def updateSpeedometerList(newItemName, stockType):
         lastItem = speedometerList[-1]  # get last item of stock from the list of items (this is a class object)
         labRowCol = lastItem.getLabRowCol()  # get the labRowCol attribute, [x,y]
         cirRowCol = lastItem.getCirRowCol()
-        print(cirRowCol)
+        # print(cirRowCol)
         # lastValue = list(self.speedometerDict.items())[-1]
         # increment up appropriate amount to place new item on empty slot on grid, sets a placeholder value of stock
         stockItem = Item(newItemName, 10, 578, 10, stockType, 'today', [2, labRowCol[1] + 2], [2, cirRowCol[1] + 2])  # instantiate individual item
         speedometerList.append(stockItem)
-        print(*speedometerList,'\n')
+        # print(*speedometerList,'\n')
 
 def updateStockAndUnitValueDict(maxStock,nameOfItem): # put max stock value into StockAndUnitValueDict
 
@@ -1083,7 +1110,7 @@ def updateStockAndUnitValueDict(maxStock,nameOfItem): # put max stock value into
     stockAndUnitValueDict[nameOfItem][0] = maxStock
     stockAndUnitValueDict[nameOfItem][1] = 258/maxStock  # 258 is the total range of speed
 
-    print('stockAndUnitValueDict contents', stockAndUnitValueDict.items(),'\n')
+    # print('stockAndUnitValueDict contents', stockAndUnitValueDict.items(),'\n')
 
 def updateConfigFile():  # See loadSpeedomterDict for other side of process
 
@@ -1103,11 +1130,11 @@ def updateConfigFile():  # See loadSpeedomterDict for other side of process
 
     with open('config.txt', 'wb') as f: # Open in wb mode which deletes all contents previously saved and will write new contents
         p.dump(speedometerList, f)
-        print('updating config file', *speedometerList)
+        # print('updating config file', *speedometerList)
         f.close()
     with open('config2.txt', 'wb') as f2:
         p.dump(stockAndUnitValueDict, f2)
-        print('updating config2 file', stockAndUnitValueDict.items())
+        # print('updating config2 file', stockAndUnitValueDict.items())
         f2.close()
 
 
