@@ -151,7 +151,7 @@ import time
 # Added self.getCanvas method, and switched this in for editItem() to clear the sped before drawing
 # Added self.chgCanColour() and addded to editItem to highlight the item being edited
 # comment out all print statements
-
+# Added refresh to deleteItem(), and auto close pop up window
 
 speedometerList = []  # List holding all instantiated classes of class Item (items of stock)
 
@@ -830,7 +830,7 @@ def editItem(itemName):
     editItemEntry = Entry(top, width=10)
 
     # Buttons on Edit Item Popup Window
-    deleteItemButton = Button(top, command=lambda:deleteItem(itemName,speedometerList), text="Delete Item", width= 12)
+    deleteItemButton = Button(top, command=lambda:deleteItem(top,itemName,speedometerList), text="Delete Item", width= 12)
     renameItemButton = Button(top, command=lambda:renameItem(itemName), text="Rename Item", width= 12)
     editFullStockButton = Button(top, command=lambda:editFullStock(itemName), text="Edit Full Stock", width= 12)
 
@@ -906,15 +906,15 @@ def editItem(itemName):
 #     text.delete(0, END)
 
 
-def deleteItem(itemName,speedometerList):
+def deleteItem(window,itemName,speedometerList):
 
     '''
     This function searches the speedometerList for the item which the user has chosen to delete (from the edit button)
     and then removes that item from the speedometerList. Note, if there happens to be items with duplicate names, all will
     be deleted.
 
-    :input: itemName: name of item from class Item which will be deleted
-    :return: None
+    input: itemName: name of item from class Item which will be deleted
+    return: None
     '''
 
     c = 0
@@ -929,6 +929,9 @@ def deleteItem(itemName,speedometerList):
             c+=1
 
     logHistory('Delete', 'n/a', 'Deleted', 'n/a', itemName)
+    window.destroy()
+    mainWin.drawCircles()
+
 
     # del speedometerList[itemName]
     # del stockAndUnitValueDict[itemName]
