@@ -17,34 +17,43 @@ class MainWindow:
         self.text = []
         self.textCount = 0
         self.master.geometry("+100+100")  # position of the window in the screen (200x300)
-        # self.master.geometry("700x400")  # set size of the root window (master) (1500x700);
+        # self.master.geometry("700x800")  # set size of the root window (master) (1500x700);
         # if not set, the frames will fill the master window
 
         # Instantiate the frames
         while self.frameCount < self.numOfFrames:
-            self.frames.append(Frame(master, bd=5, padx=5, bg=self.backGroundColour))
+            self.frames.append(Frame(self.master, bd=5, padx=5, bg=self.backGroundColour))
             self.frameCount += 1
 
         # Place the frames on the grid and configure the weighting of the frames
         c = 0
         for frame in self.frames:
             frame.grid(row=1, column=c,sticky = "nsew")
-            self.master.grid_columnconfigure(c, weight=1)  # ALlows frames to expand as master window expands
-            self.master.grid_rowconfigure(1, weight=1)
+            frame.grid_columnconfigure(c, weight=1)  # ALlows frames to expand as master window expands
+            # frame.grid_rowconfigure(1, weight=1)
+            # frame.grid_propagate(0)
             c += 1
+
+        # Make frames expand as you resize the window. Conf the grid on the master window
+        for num in range(0,self.numOfFrames):
+            self.master.grid_columnconfigure(num, weight=1)
+
 
         # Create text boxes
         for frame in self.frames:
-            self.text.append(Text(frame, height=30, width=15, bg=self.textBoxColour, fg=self.textColour))
-
+            t=Text(frame, height=60, width=15, bg=self.textBoxColour, fg=self.textColour)
+            self.text.append(t)
+            # t.grid_columnconfigure(0, weight=1)
+            # t.grid_rowconfigure(0, weight=1)
+            
         while self.textCount < self.numOfFrames:
             self.text[self.textCount].pack()
             self.textCount += 1
         print('done')
 
-        scrollBar = Scrollbar(self.master, command=self.text[0].yview)
-        scrollBar.grid(row=1, column=0, sticky='nsew')
-        self.text[0]['yscrollcommand'] = scrollBar.set
+        # scrollBar = Scrollbar(self.master, command=self.text[0].yview)
+        # scrollBar.grid(row=1, column=0, sticky='nsew')
+        # self.text[0]['yscrollcommand'] = scrollBar.set
 
     def insertText(self, column, text):
         """
