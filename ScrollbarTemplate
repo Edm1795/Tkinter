@@ -1,0 +1,26 @@
+import tkinter as tk
+
+# Working scroll bar template. This creates a frame on top of a canvas. It then places labels (packed in this case) onto the frame; the frame
+# is then inserted into a create window (built on the canvas). The height of the create window must match what the size of the frame is... I think
+
+root = tk.Tk()
+
+
+canvas = tk.Canvas(root)
+frame=tk.Frame(canvas)
+scrolly = tk.Scrollbar(root, orient='vertical', command=canvas.yview)
+
+# display labels in the canvas
+for i in range(20):
+    label = tk.Label(frame, text='label %i' % i)
+    label.pack() # Packed labels will not scroll (pack, place, grided items cannot be scrolled)
+    # canvas.create_window(0, i*50, anchor='nw', window=label, height=50)
+    # print(i*50)
+
+canvas.create_window(0, 250, anchor='nw', window=frame, height=250)
+canvas.configure(scrollregion=canvas.bbox('all'), yscrollcommand=scrolly.set)
+
+canvas.pack(fill='both', expand=True, side='left')
+scrolly.pack(fill='y', side='right')
+
+root.mainloop()
